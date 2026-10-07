@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+
+# Raw 97.4 MB source CSV — download link + checksum in README
+data/spotify_reviews_18months.csv
+__pycache__/
+.venv/
+local-reference.json
+self-check.json
