@@ -8,3 +8,4 @@ __pycache__/
 .venv/
 local-reference.json
 self-check.json
+runs/*/state.db*
