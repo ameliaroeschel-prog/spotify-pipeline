@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music App Review Insights</title>
+  <meta name="description" content="Independent class analysis of public music-streaming app reviews: issue rankings and an AI-generated recommendation with traceable evidence.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <p class="eyebrow">Independent class project &middot; Agentic AI final</p>
+      <h1>What are app reviewers complaining about, and what should be fixed first?</h1>
+      <p class="sub" id="run-line">Loading data from the database&hellip;</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="synthetic-banner" class="banner" hidden>
+      <strong>Synthetic test data.</strong> This deployment is showing the generated fixture, not the real review analysis.
+    </div>
+    <div id="error" class="banner error" hidden></div>
+
+    <section aria-labelledby="kpi-h">
+      <h2 id="kpi-h" class="visually-hidden">Headline metrics</h2>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <section class="card" aria-labelledby="memo-h">
+      <div class="card-head">
+        <h2 id="memo-h">AI recommendation</h2>
+        <span class="tag">AI-generated</span>
+      </div>
+      <p class="hint">Click a <span class="chip chip-demo">C1</span> chip to see the number behind it, or a review ID to read the review.</p>
+      <div id="claim-detail" class="claim-detail" hidden></div>
+      <div id="memo" class="memo"></div>
+      <div class="memo-grid">
+        <div>
+          <h3>Alternatives considered</h3>
+          <ul id="alternatives" class="plain"></ul>
+        </div>
+        <div>
+          <h3>Memo's stated limitations</h3>
+          <ul id="memo-limitations"></ul>
+        </div>
+      </div>
+      <p class="meta" id="memo-meta"></p>
+    </section>
+
+    <section class="card" aria-labelledby="rank-h">
+      <div class="card-head">
+        <h2 id="rank-h">Issue ranking</h2>
+        <span class="tag">priority score = sum of severity</span>
+      </div>
+      <p class="hint">Complaints and cancellation threats grouped into issues. Select a row for its trend and evidence.</p>
+      <div class="table-scroll">
+        <table class="rank" id="ranking">
+          <thead><tr>
+            <th scope="col">#</th><th scope="col">Issue</th>
+            <th scope="col" class="num">Complaints</th><th scope="col" class="num hide-sm">Mean severity</th>
+            <th scope="col" class="num">Priority score</th><th scope="col" class="bar-col"><span class="visually-hidden">Score bar</span></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="issue-card" aria-labelledby="issue-h" hidden>
+      <div class="card-head">
+        <h2 id="issue-h">Issue detail</h2>
+        <span class="tag" id="issue-tag"></span>
+      </div>
+      <div id="issue-body"></div>
+    </section>
+
+    <section class="card" aria-labelledby="trend-h">
+      <h2 id="trend-h">Complaint share by month</h2>
+      <p class="hint">Complaints + cancellation threats &divide; all classified reviews that month. Hover for the counts.</p>
+      <div id="monthly-chart" class="chart"></div>
+      <details><summary>Show as table</summary><div id="monthly-table" class="table-scroll"></div></details>
+    </section>
+
+    <div class="two-col">
+      <section class="card" aria-labelledby="topic-h">
+        <h2 id="topic-h">Topics</h2>
+        <p class="hint">All classified reviews by primary topic.</p>
+        <div id="topic-bars"></div>
+      </section>
+      <section class="card" aria-labelledby="sev-h">
+        <h2 id="sev-h">Severity</h2>
+        <p class="hint">1 = no problem &hellip; 5 = serious financial, privacy or data harm.</p>
+        <div id="severity-bars"></div>
+        <h3 class="mt">Intent</h3>
+        <div id="intent-bars"></div>
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="how-h">
+      <h2 id="how-h">How this was made &amp; limitations</h2>
+      <div class="how">
+        <ol>
+          <li><strong>Ingest:</strong> every public review in the 18-month dataset is accounted for; empty or failed rows are quarantined with a reason, not dropped.</li>
+          <li><strong>Enrich:</strong> a language model labels each review's topic, intent, severity, sentiment and an exact evidence quote (up to 50 reviews per request; identical texts reuse a saved result).</li>
+          <li><strong>Verify:</strong> a second model re-checks a sample, and labels are compared with 50 hand-labelled “golden” reviews.</li>
+          <li><strong>Group &amp; rank:</strong> complaints are grouped into issues and ranked by total severity using plain code, not the model.</li>
+          <li><strong>Recommend:</strong> a model writes the memo from the saved ranking; every number it cites is a claim in the database.</li>
+        </ol>
+        <ul class="limits">
+          <li>Reviews are <strong>self-selected</strong> and public; they over-represent strong opinions and are not a sample of all users.</li>
+          <li>An expressed intent to cancel is <strong>not observed churn</strong>.</li>
+          <li>There is <strong>no revenue, usage or account data</strong>, so the ranking measures reported pain, not business impact.</li>
+          <li>Labels come from a model and can be wrong; see the golden-set agreement above.</li>
+        </ul>
+        <p class="meta" id="pipeline-meta"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Independent student analysis for a UC Berkeley Haas course. Not affiliated with, endorsed by, or sponsored by Spotify or any app maker. Review content is from publicly posted app-store reviews; product names are used only to describe the data.</p>
+    <p>Read-only dashboard: data is served from a Postgres database; no AI model is called when you view this page.</p>
+  </footer>
+
+  <dialog id="review-dialog" aria-labelledby="review-h">
+    <form method="dialog"><button class="close" aria-label="Close">&times;</button></form>
+    <h2 id="review-h">Review</h2>
+    <div id="review-body">Loading&hellip;</div>
+  </dialog>
+  <div id="tooltip" class="tooltip" role="status" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "run_id": "synthetic-fixture",
+  "synthetic": true,
+  "source_rows": 300,
+  "completed": 297,
+  "quarantined": 3,
+  "quarantine_reasons": {
+    "empty_review_text": 3
+  },
+  "distinct_texts": 44,
+  "cache_reuse_rows": 114,
+  "golden": {
+    "topic_agreement": 0.86,
+    "intent_agreement": 0.9,
+    "severity_exact": 0.72,
+    "severity_mae": 0.32,
+    "n": 50
+  },
+  "verifier": {
+    "sample_size": 30,
+    "topic_agreement": 0.9,
+    "intent_agreement": 0.93,
+    "severity_exact": 0.77
+  },
+  "cost_usd": 0,
+  "wall_seconds": 1.5,
+  "model": "synthetic-fixture (no model call)",
+  "label_config": "synthetic-fixture+prompt-v0+schema-v0"
+}

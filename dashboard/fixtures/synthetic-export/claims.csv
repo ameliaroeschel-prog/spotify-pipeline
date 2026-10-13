@@ -1,0 +1,10 @@
+claim_id,issue_id,metric,value
+C1,ISS-01,complaint_count,47
+C2,ISS-01,mean_severity,3.957447
+C3,ISS-01,priority_score,186
+C4,ISS-02,complaint_count,30
+C5,ISS-02,mean_severity,3.433333
+C6,ISS-02,priority_score,103
+C7,ISS-03,complaint_count,32
+C8,ISS-03,mean_severity,2.343750
+C9,ISS-03,priority_score,75

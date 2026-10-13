@@ -1,0 +1,7 @@
+rank,issue_id,complaint_count,severity_sum,mean_severity,priority_score
+1,ISS-01,47,186,3.957447,186
+2,ISS-02,30,103,3.433333,103
+3,ISS-03,32,75,2.343750,75
+4,ISS-04,23,72,3.130435,72
+5,ISS-05,17,62,3.647059,62
+6,ISS-06,25,60,2.400000,60

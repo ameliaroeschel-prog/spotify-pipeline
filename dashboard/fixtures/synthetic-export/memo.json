@@ -1,0 +1,34 @@
+{
+  "recommendation": "**SYNTHETIC FIXTURE — not real findings.** Prioritise **App crashes or freezes on launch** (ISS-01) next quarter.\n\nIt has the highest baseline priority score (186 [C3]) from 47 complaints [C1] with a mean severity of 3.957447 [C2]. Representative reviews: fa5557f1-1e8f-4db0-a2c3-25f685cdae07, d5f8b466-d4e4-412b-a9db-b27f992d63ae.\n\n- **Downloads disappear from library** is close behind (score 103 [C6]), e.g. 68294d7e-6d47-42e7-a8bf-08e1a4c604eb.\n- **Too many ads / ad interruptions** has 32 complaints [C7], e.g. 6933ff48-94a8-420b-aa56-63fe2c502f85.",
+  "priority_issue_id": "ISS-01",
+  "alternatives": [
+    {
+      "issue_id": "ISS-02",
+      "why_not": "SYNTHETIC. Lower total severity; partly a workaround exists."
+    },
+    {
+      "issue_id": "ISS-03",
+      "why_not": "SYNTHETIC. Fewer complaints; mostly annoyance-level severity."
+    }
+  ],
+  "limitations": [
+    "SYNTHETIC fixture data generated for software testing.",
+    "App-store reviews are self-selected and skew negative.",
+    "Expressed intent to cancel is not observed churn."
+  ],
+  "cited_claim_ids": [
+    "C1",
+    "C2",
+    "C3",
+    "C6",
+    "C7"
+  ],
+  "cited_review_ids": [
+    "fa5557f1-1e8f-4db0-a2c3-25f685cdae07",
+    "d5f8b466-d4e4-412b-a9db-b27f992d63ae",
+    "68294d7e-6d47-42e7-a8bf-08e1a4c604eb",
+    "6933ff48-94a8-420b-aa56-63fe2c502f85"
+  ],
+  "model": "synthetic-fixture (no model call)",
+  "generated_at": "2026-10-13T00:00:00Z"
+}
