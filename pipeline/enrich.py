@@ -86,9 +86,15 @@ def find_quote(text, quote):
         return quote, "model"
     if len(text) <= C.SHORT_TEXT_CHARS:
         return text, "full_text"
-    stripped = quote.strip().strip('"').strip()
+    stripped = (quote or "").strip().strip('"').strip()
     if stripped and stripped in text:
         return stripped, "model_trimmed"
+    if stripped:
+        i = text.lower().find(stripped.lower())
+        if i >= 0:
+            return text[i:i + len(stripped)], "model_case_matched"
+    if len(text) <= C.FULL_TEXT_FALLBACK_CHARS:
+        return text, "full_text_fallback"
     return None, None
 
 

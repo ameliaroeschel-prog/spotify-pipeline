@@ -10,12 +10,24 @@ import json
 import os
 import random
 import re
+import ssl
 import time
 import urllib.error
 import urllib.request
 import uuid
 
 OPENAI_URL = "https://api.openai.com/v1/responses"
+
+
+def ssl_context():
+    """python.org builds on macOS ship without CA certs; fall back to the system bundle."""
+    ctx = ssl.create_default_context()
+    if not ctx.get_ca_certs() and os.path.exists("/etc/ssl/cert.pem"):
+        ctx = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+    return ctx
+
+
+SSL_CONTEXT = ssl_context()
 
 
 class TransientError(Exception):
@@ -45,7 +57,7 @@ def call_openai(model, effort, instructions, user, schema, schema_name, max_outp
     req = urllib.request.Request(OPENAI_URL, data=json.dumps(body).encode("utf-8"), method="POST",
                                  headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with urllib.request.urlopen(req, timeout=timeout, context=SSL_CONTEXT) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             request_id = resp.headers.get("x-request-id") or data.get("id")
     except urllib.error.HTTPError as e:
@@ -83,7 +95,7 @@ def call_mock(user, **_):
     if random.random() < float(os.environ.get("MOCK_FAIL_RATE", "0")):
         raise TransientError("mock injected transient failure")
     items = []
-    for i, text in re.findall(r"<r i=(\d+)>(.*?)</r>", user, flags=re.S):
+    for i, text in re.findall(r"<r i=(\d+)[^>]*>(.*?)</r>", user, flags=re.S):
         low = text.lower()
         topic = next((t for t, rx in _MOCK_RULES if re.search(rx, low)), "other")
         neg = bool(re.search(r"not|n't|bad|worst|hate|crash|ads", low))
