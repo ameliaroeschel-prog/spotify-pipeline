@@ -204,11 +204,14 @@ class Enricher:
                     text_sha[rid], self.label_config, rid, lab["topic"], lab["intent"], lab["sentiment"], lab["severity"],
                     json.dumps(lab["entities"]), lab["evidence_quote"], int(lab["needs_review"]), lab["quote_source"],
                     attempts.items[-1]["request_id"], time.time(), lab["subtopic"]))
-                self.con.execute("UPDATE reviews SET status='completed' WHERE text_sha=? AND status='pending'", (text_sha[rid],))
+            done_shas = [text_sha[rid] for rid in good]
+            if done_shas:   # one statement per batch; '+status' makes SQLite use the text_sha index
+                self.con.execute(f"UPDATE reviews SET status='completed' WHERE text_sha IN ({','.join('?' * len(done_shas))})"
+                                 " AND +status='pending'", done_shas)
             if retry_round and not isolate:   # second failure: quarantine with reason and attempt count
                 for rid, why in bad.items():
                     self.con.execute("INSERT OR REPLACE INTO failures VALUES (?,?,?,?)", (rid, self.label_config, 2, why))
-                    self.con.execute("UPDATE reviews SET status='quarantined', reason=? WHERE text_sha=? AND status='pending'",
+                    self.con.execute("UPDATE reviews SET status='quarantined', reason=? WHERE text_sha=? AND +status='pending'",
                                      (f"enrich_failed:{why}", text_sha[rid]))
         return good, bad
 
