@@ -99,6 +99,7 @@ def export(db, csv_path, grading_dir, dash_dir=None, allow_multi_issue=False):
 
     if dash_dir:
         export_dashboard(con, rows, ranking, membership, memo_row, Path(dash_dir))
+    render_memo(con, grading_dir.parent / "memo.md")
     return {"records": len(rows), "status_counts": dict(status), "issues": len(ranking),
             "memberships": len(membership), "claims": len(claims)}
 
@@ -165,6 +166,41 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
                 f.write(json.dumps({"review_id": rid, "review_text": row[0], "review_rating": row[1],
                                     "review_month": row[2][:7], "evidence_quote": row[3], "topic": row[4],
                                     "intent": row[5], "severity": row[6], "issue_id": row[7]}, ensure_ascii=False) + "\n")
+
+
+def render_memo(con, path):
+    """memo.md: the model's validated prose plus code-generated tables, so every number is traceable."""
+    row = con.execute("SELECT memo_json, claims_json, pack_json, validation FROM memo ORDER BY created DESC LIMIT 1").fetchone()
+    if not row or not row[0] or row[0] == "null":
+        return False
+    memo, claims, pack, validation = (json.loads(x) for x in row)
+    names = {i["issue_id"]: i["name"] for i in pack["issues"]}
+    quotes = {e["review_id"]: e for e in pack["evidence"]}
+    L = ["# Decision memo: where should next quarter's product effort go?", "",
+         f"*Source: {pack['source_rows']:,} Google Play reviews (May 2022 – Nov 2023); {pack['completed']:,} classified, "
+         f"{pack['quarantined']:,} quarantined, {pack['pending']:,} unprocessed. Written by the memo-writer role "
+         f"(gpt-6-luna) from saved aggregates only; every number and ID below was checked by code "
+         f"(validation: {'passed' if validation['passed'] else 'FAILED: ' + '; '.join(validation['problems'])}).*", "",
+         f"**Recommendation: {memo['priority_area'].replace('_', '/')} — lead issue `{memo['priority_issue_id']}` "
+         f"({names.get(memo['priority_issue_id'], '')})**", "", memo["recommendation"], "", "## Alternatives considered", ""]
+    L += [f"- **`{a['issue_id']}`** ({names.get(a['issue_id'], '')}): {a['why_not']}" for a in memo["alternatives"]]
+    L += ["", "## Limitations", ""] + [f"- {x}" for x in memo["limitations"]]
+    L += ["", "## Area totals cited as [A#] (code-computed, `aggregates.csv`)", "",
+          "| ID | Area | Topics | Complaint + cancellation reviews | Severity sum |", "|---|---|---|---|---|"]
+    L += [f"| A{k} | {a} | {', '.join(v['topics'])} | {v['complaints']:,} | {v['severity_sum']:,} |"
+          for k, (a, v) in enumerate(pack["area_totals"].items(), 1)]
+    L += ["", "## Issue claims cited as [C#] (`grading/claims.csv`, recomputed by the checker)", "",
+          "| Claim | Issue | Metric | Value |", "|---|---|---|---|"]
+    L += [f"| {c['claim_id']} | `{c['issue_id']}` {names.get(c['issue_id'], '')} | {c['metric']} | {c['value']} |" for c in claims]
+    L += ["", "## Evidence quotes cited", ""]
+    for rid in memo["cited_review_ids"]:
+        e = quotes.get(rid)
+        if e:
+            L.append(f"- `{rid}` ({e['issue_id']}, severity {e['severity']}): \"{e['quote']}\"")
+    L += ["", "*Reviews are self-selected public feedback. Cancellation language is stated intent, not observed churn. "
+          "No revenue, plan tier or retention data exists in this dataset, so no revenue or churn impact is claimed.*", ""]
+    Path(path).write_text("\n".join(L), encoding="utf-8")
+    return True
 
 
 def checkpoint(db, out):
