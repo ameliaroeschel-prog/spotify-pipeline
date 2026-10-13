@@ -1,5 +1,5 @@
 {
-  "label": "cp500 + cp10k",
+  "label": "cp500-cp10k",
   "controls": {
     "budget": 10.0,
     "max_workers": null,
@@ -173,33 +173,33 @@
       }
     },
     {
-      "label": "cp10k (in progress)",
+      "label": "cp10k",
       "run_dir": "runs/cp10k",
-      "pending_reviews": 7129,
-      "base_enrich_plus_verify": null,
+      "pending_reviews": 0,
+      "base_enrich_plus_verify": 3.3037337131662006,
       "enrich_label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3",
       "enrich_tiers": "flex",
-      "workers": null,
+      "workers": 12,
       "reviews": 10000,
-      "completed": 2871,
-      "quarantined": 0,
-      "failed": 7129,
-      "texts": 2800,
-      "enrich_cost": 0.015238155,
-      "enrich_unresolved": 0,
-      "enrich_per_1k_texts": 0.005442198214285714,
-      "enrich_attempts": 56,
-      "enrich_failed_attempts": 0,
-      "retry_rate": 0.0,
-      "invalid_first_pass": 0,
-      "invalid_rate": 0.0,
-      "enrich_wall_seconds": 84.77363514900208,
-      "enrich_time_source": "derived from first/last call timestamps",
-      "throughput_texts_per_s": 33.029136890008196,
-      "verify_per_review": null,
-      "measured_verify_rate": 0.0,
-      "group_cost": null,
-      "memo_cost": null,
+      "completed": 9996,
+      "quarantined": 4,
+      "failed": 0,
+      "texts": 8448,
+      "enrich_cost": 0.050424655,
+      "enrich_unresolved": 1,
+      "enrich_per_1k_texts": 0.005968827533143939,
+      "enrich_attempts": 290,
+      "enrich_failed_attempts": 1,
+      "retry_rate": 0.0034602076124567475,
+      "invalid_first_pass": 601,
+      "invalid_rate": 0.07114109848484848,
+      "enrich_wall_seconds": 253.79252290725708,
+      "enrich_time_source": "stages table",
+      "throughput_texts_per_s": 33.287032664422256,
+      "verify_per_review": 8.308757396449702e-05,
+      "measured_verify_rate": 0.020004734848484848,
+      "group_cost": 0.0030943000000000008,
+      "memo_cost": 0.0006640999999999999,
       "projection": {
         "scope": {
           "rows": 660622,
@@ -208,32 +208,32 @@
           "distinct": 484189,
           "exact": true
         },
-        "workers": 1,
+        "workers": 12,
         "scenarios": {
           "base": {
             "assumptions": {
-              "retry": 0.0,
+              "retry": 0.0034602076124567475,
               "fallback": 0.0,
               "output_at_cap": false
             },
             "reuse": {
               "stages": {
-                "enrich": 2.6350525111767857,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 2.900040775049045,
+                "verify": 0.4036929381171556,
+                "group": 0.0030943000000000008,
+                "memo": 0.0006640999999999999
               },
-              "total": null,
+              "total": 3.3074921131662007,
               "texts": 484189
             },
             "no_reuse": {
               "stages": {
-                "enrich": 3.5951651201410715,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 3.956704998181237,
+                "verify": 0.5507832440568373,
+                "group": 0.0030943000000000008,
+                "memo": 0.0006640999999999999
               },
-              "total": null,
+              "total": 4.511246642238074,
               "texts": 660609
             }
           },
@@ -245,22 +245,22 @@
             },
             "reuse": {
               "stages": {
-                "enrich": 5.99300274430875,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 6.841038091322736,
+                "verify": 0.4425309828532544,
+                "group": 0.003403730000000001,
+                "memo": 0.00073051
               },
-              "total": null,
+              "total": 7.287703314175991,
               "texts": 484189
             },
             "no_reuse": {
               "stages": {
-                "enrich": 8.17662431388375,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 9.333651389169562,
+                "verify": 0.6037723906402366,
+                "group": 0.003403730000000001,
+                "memo": 0.00073051
               },
-              "total": null,
+              "total": 9.941558019809799,
               "texts": 660609
             }
           },
@@ -272,58 +272,58 @@
             },
             "reuse": {
               "stages": {
-                "enrich": 11.23586175993375,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 11.903744754408677,
+                "verify": 0.4425309828532544,
+                "group": 0.003403730000000001,
+                "memo": 0.00073051
               },
-              "total": null,
+              "total": 12.350409977261931,
               "texts": 484189
             },
             "no_reuse": {
               "stages": {
-                "enrich": 15.329781142008748,
-                "verify": null,
-                "group": null,
-                "memo": null
+                "enrich": 16.241015220224252,
+                "verify": 0.6037723906402366,
+                "group": 0.003403730000000001,
+                "memo": 0.00073051
               },
-              "total": null,
+              "total": 16.84892185086449,
               "texts": 660609
             }
           }
         },
         "time_seconds": {
-          "base": 14672.121114808815,
-          "conservative": 16138.066172993109,
+          "base": 14780.726241067656,
+          "conservative": 16190.522769083444,
           "missing": [
-            "verify",
-            "group",
-            "rank",
-            "memo",
-            "export"
+            "rank"
           ]
         },
         "inputs": {
-          "enrich_units": 2800,
-          "verify_units": 0,
-          "measured_retry": 0.0,
-          "base_retry": 0.0,
+          "enrich_units": 8448,
+          "verify_units": 169,
+          "measured_retry": 0.0034602076124567475,
+          "base_retry": 0.0034602076124567475,
           "cons_retry": 0.1,
           "measured_fallback": 0.0,
           "verify_rate": 0.01,
-          "measured_verify_rate": 0.0,
+          "measured_verify_rate": 0.020004734848484848,
           "enrich_per_unit": {
-            "input": 3.000000000000002e-09,
-            "cached_input": 2.8294821428571433e-07,
-            "output": 5.15625e-06
+            "input": 8.709753787878783e-08,
+            "cached_input": 3.872342566287865e-07,
+            "output": 5.494495738636359e-06
           },
           "enrich_tokens_per_unit": {
-            "input": 0.06,
-            "cached_input": 56.589642857142856,
-            "output": 20.625
+            "input": 1.7419507575757576,
+            "cached_input": 77.44685132575758,
+            "output": 21.977982954545453
           },
-          "verify_per_unit": null,
-          "fallback_unit_cost": 0.00031954928571428575,
+          "verify_per_unit": {
+            "input": 8.308757396449702e-05,
+            "cached_input": 0.0,
+            "output": 0.0
+          },
+          "fallback_unit_cost": 0.0003781574337121212,
           "output_price": 2.5e-07
         }
       }
@@ -336,11 +336,7 @@
     "cp500: WARNING: conservative/no_reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
     "cp500: WARNING: ceiling/reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
     "cp500: WARNING: ceiling/no_reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: base/reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: base/no_reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: conservative/reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: conservative/no_reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: ceiling/reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget",
-    "cp10k (in progress): WARNING: ceiling/no_reuse total is UNKNOWN (a stage was not measured or has unresolved usage), cannot confirm it fits the $10.00 budget"
+    "cp10k: WARNING: ceiling scenario (reuse) projects $12.35, which EXCEEDS the $10.00 budget",
+    "cp10k: WARNING: ceiling scenario (no-reuse) projects $16.85, which EXCEEDS the $10.00 budget"
   ]
 }
