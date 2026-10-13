@@ -124,6 +124,35 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
         memo = {**memo, "priority_issue_id": memo.get("priority_issue_id"), "model": "gpt-6-luna",
                 "generated_at": con.execute("SELECT MAX(created) FROM memo").fetchone()[0]}
     (out / "memo.json").write_text(json.dumps(memo, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # Area aggregates the memo cites as [A1]..[A4] (code-computed; not issue-level claims)
+    with open(out / "aggregates.csv", "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["aggregate_id", "area", "topics", "complaints", "severity_sum"])
+        for area, v in pack.get("area_totals", {}).items():
+            w.writerow([v.get("aggregate_id"), area, ";".join(v["topics"]), v["complaints"], v["severity_sum"]])
+    status = Counter(r["status"] for r, _ in rows)
+    golden_path = ROOT / "evals/golden_summary.json"
+    golden = json.loads(golden_path.read_text()) if golden_path.exists() else {}
+    vnotes = con.execute("SELECT notes FROM stages WHERE stage='verify' ORDER BY started DESC LIMIT 1").fetchone()
+    vnotes = json.loads(vnotes[0]) if vnotes and vnotes[0] else {}
+    run_id = con.execute("SELECT run_id FROM runs ORDER BY started DESC LIMIT 1").fetchone()
+    (out / "run_summary.json").write_text(json.dumps({
+        "run_id": run_id[0] if run_id else None, "synthetic": False, "source_rows": len(rows),
+        "completed": status.get("completed", 0), "quarantined": status.get("quarantined", 0),
+        "pending": status.get("pending", 0),
+        "quarantine_reasons": dict(Counter(r.get("reason") for r, _ in rows if r["status"] == "quarantined")),
+        "distinct_texts": con.execute("SELECT COUNT(DISTINCT text_sha) FROM reviews WHERE status<>'quarantined' OR reason<>'empty_review_text'").fetchone()[0],
+        "cache_reuse_rows": sum(1 for r, _ in rows if r.get("cache_source_id")),
+        "golden": {k: golden.get(k) for k in ("n", "topic_agreement", "intent_agreement", "severity_exact", "severity_mae",
+                                               "label_config")},
+        "verifier": {k: vnotes.get(k) for k in ("sample_size", "topic_agreement", "intent_agreement", "severity_exact",
+                                                 "severity_mae")},
+        "cost_usd": round(con.execute("SELECT COALESCE(SUM(cost_usd),0) FROM calls").fetchone()[0], 6),
+        "cost_by_role_usd": {r: round(c or 0, 6) for r, c in con.execute("SELECT role, SUM(cost_usd) FROM calls GROUP BY role")},
+        "wall_seconds": round(con.execute("SELECT COALESCE(SUM(ended-started),0) FROM stages").fetchone()[0], 1),
+        "model": "gpt-6-luna",
+        "label_config": next((r["label_config"] for r, _ in rows if r.get("label_config")), None),
+    }, indent=2) + "\n", encoding="utf-8")
     cited = set((memo or {}).get("cited_review_ids", []))
     examples = {rid for i in issues for rid in i["example_review_ids"]} | cited | {e["review_id"] for e in pack.get("evidence", [])}
     with open(out / "evidence.jsonl", "w", encoding="utf-8") as f:

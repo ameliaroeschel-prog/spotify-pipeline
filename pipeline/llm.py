@@ -120,6 +120,8 @@ def call_mock(user=None, text=None, questions=None, **_):
     if random.random() < float(os.environ.get("MOCK_FAIL_RATE", "0")):
         raise TransientError("mock injected transient failure")
     time.sleep(0.01)
+    if "MOCK_POLICY_BLOCK" in (user or text or ""):      # simulate OpenAI's whole-request policy rejection
+        raise PermanentError('HTTP 400: {"error": {"message": "Invalid prompt: your prompt was flagged", "code": "invalid_prompt"}}')
     base = {"request_id": "mock-" + uuid.uuid4().hex[:12], "status": "completed", "incomplete_reason": None,
             "service_tier": "standard", "usage": {"input_tokens": None, "cached_input_tokens": None,
                                                    "output_tokens": None, "reasoning_tokens": None}}
@@ -131,7 +133,7 @@ def call_mock(user=None, text=None, questions=None, **_):
     lines = []
     for i, t in re.findall(r"<r i=(\d+)[^>]*>(.*?)</r>", user or "", flags=re.S):
         topic, intent, sev, sent = _mock_label(t)
-        lines.append(f"{i}|{topic}|{intent}|{sev}|{sent}|0|{t[:40] if len(t) > 160 else ''}")
+        lines.append(f"{i}|{topic}|general|{intent}|{sev}|{sent}|0|{t[:40] if len(t) > 160 else ''}")
     return {**base, "text": json.dumps({"r": lines})}
 
 

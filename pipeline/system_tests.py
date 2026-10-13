@@ -24,14 +24,14 @@ OUT = ROOT / "evals" / "system_tests"
 
 def test_malformed_output():
     from pipeline.enrich import parse_and_validate
-    batch = [("A", "App crashes every time I open it"), ("B", "Love it"), ("C", "x" * 500), ("D", "ok"), ("E", "fine")]
+    batch = [("A", "App crashes every time I open it"), ("B", "Love it"), ("C", "x " * 1200), ("D", "ok"), ("E", "fine")]
     result = {"status": "completed", "incomplete_reason": None, "text": json.dumps({"r": [
-        "1|playback|complaint|4|-2|0|",               # valid
-        "2|playback|praise|9|2|0|",                   # severity out of range
-        "3|other|complaint|2|-1|0|not in the text",   # long review, quote not a substring
-        "9|other|praise|1|1|0|",                      # foreign index (no review 9)
-        "garbage line without fields",                # unparseable
-        "1|other|praise|1|2|0|",                      # duplicate index: first answer kept
+        "1|playback|crashes_wont_open|complaint|4|-2|0|",   # valid
+        "2|playback|general|praise|9|2|0|",                  # severity out of range
+        "3|other|general|complaint|2|-1|0|not in the text",  # long review, quote not found anywhere
+        "9|other|general|praise|1|1|0|",                     # foreign index (no review 9)
+        "garbage line without fields",                       # unparseable
+        "1|other|general|praise|1|2|0|",                     # duplicate index: first answer kept
         # D and E missing entirely
     ]})}
     good, bad = parse_and_validate(result, batch)

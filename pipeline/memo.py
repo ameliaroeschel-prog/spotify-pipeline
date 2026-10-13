@@ -16,7 +16,7 @@ from pipeline.llm import PermanentError, TransientError, call, with_retries
 from pipeline.rank import compute_ranking
 from pipeline.state import Attempts, Ledger, new_run_id, open_state, stage, write_calls
 
-MEMO_PROMPT_VERSION = "memo-v1"
+MEMO_PROMPT_VERSION = "memo-v3"
 MEMO_EFFORT = "low"
 TOP_ISSUES = 8
 QUOTES_PER_ISSUE = 3
@@ -33,6 +33,11 @@ Rules:
 - Every number you write must be copied exactly from the supplied data (claims or area_totals). Do not
   compute new numbers, percentages, revenue, churn, or retention effects.
 - Cite issue-level numbers with their claim ID in square brackets, e.g. "1,234 complaints [C1]".
+- Cite area-level numbers with their aggregate ID, e.g. "2,000 complaints [A2]".
+- Any comparison between areas must agree with area_ranking_by_severity_sum (computed by code). If you
+  recommend an area that is not ranked first, say so explicitly and justify it with the supplied data.
+- The issue "other.general" means no specific product topic was supported; do not recommend it as a fix.
+- Describe an issue only by its supplied name/description and quotes; never infer what it is from IDs.
 - Cite evidence quotes by review ID in parentheses, e.g. (review 1a2b...). Use only supplied IDs.
 - Reviews are self-selected public feedback; cancellation language is stated intent, not observed churn.
 - Recommend ONE priority area and its lead issue, compare at least two alternatives, and state limitations.
@@ -78,20 +83,25 @@ def build_pack(con):
     by_topic = {t: (n, s) for t, n, s in con.execute("""
         SELECT x.topic, COUNT(*), SUM(x.severity) FROM reviews r JOIN results x ON x.text_sha=r.text_sha
         WHERE r.status='completed' AND x.intent IN ('complaint','cancellation') GROUP BY 1""")}
-    area_totals = {a: {"complaints": sum(by_topic.get(t, (0, 0))[0] for t in ts),
+    area_totals = {a: {"aggregate_id": f"A{k}", "complaints": sum(by_topic.get(t, (0, 0))[0] for t in ts),
                        "severity_sum": sum(by_topic.get(t, (0, 0))[1] or 0 for t in ts), "topics": ts}
-                   for a, ts in AREAS.items()}
+                   for k, (a, ts) in enumerate(AREAS.items(), 1)}
+    # Code ranks the four areas so the model cannot get a comparison backwards (memo-v2 did).
+    area_ranking = [{"rank": k, "area": a, "aggregate_id": v["aggregate_id"], "severity_sum": v["severity_sum"],
+                     "complaints": v["complaints"]}
+                    for k, (a, v) in enumerate(sorted(area_totals.items(),
+                                                      key=lambda kv: (-kv[1]["severity_sum"], kv[0])), 1)]
     evidence = []
     for r in top[:5]:
         rows = con.execute("""SELECT m.review_id, x.evidence_quote, x.severity FROM membership m
                               JOIN reviews rv ON rv.review_id=m.review_id JOIN results x ON x.text_sha=rv.text_sha
                               WHERE m.issue_id=? AND rv.review_id = x.origin_id""", (r["issue_id"],)).fetchall()
-        rows.sort(key=lambda t: (-t[2], hashlib.sha256(t[0].encode()).hexdigest()))
+        rows.sort(key=lambda t: hashlib.sha256(t[0].encode()).hexdigest())     # representative, not extreme
         evidence += [{"issue_id": r["issue_id"], "review_id": rid, "quote": q[:220], "severity": s}
                      for rid, q, s in rows[:QUOTES_PER_ISSUE]]
     pack = {"source_rows": sum(totals.values()), "completed": totals.get("completed", 0),
             "quarantined": totals.get("quarantined", 0), "pending": totals.get("pending", 0),
-            "intent_counts": intents, "area_totals": area_totals,
+            "intent_counts": intents, "area_totals": area_totals, "area_ranking_by_severity_sum": area_ranking,
             "issues": [{"issue_id": r["issue_id"], "name": names.get(r["issue_id"], ("", ""))[0],
                         "description": names.get(r["issue_id"], ("", ""))[1], "rank": r["rank"]} for r in top],
             "claims": claims, "evidence": evidence}
@@ -119,8 +129,9 @@ def validate(memo, pack):
     review_ids = {e["review_id"] for e in pack["evidence"]}
     issue_ids = {i["issue_id"] for i in pack["issues"]}
     text = memo["recommendation"] + " " + " ".join(a["why_not"] for a in memo["alternatives"])
-    for cid in set(re.findall(r"\[(C\d+)\]", text)) | set(memo["cited_claim_ids"]):
-        if cid not in claim_ids:
+    agg_ids = {v["aggregate_id"] for v in pack["area_totals"].values()}
+    for cid in set(re.findall(r"\[([CA]\d+)\]", text)) | set(memo["cited_claim_ids"]):
+        if cid not in claim_ids | agg_ids:
             problems.append(f"unknown claim {cid}")
     for rid in set(memo["cited_review_ids"]) | set(re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", text)):
         if rid not in review_ids:
@@ -130,7 +141,7 @@ def validate(memo, pack):
     for a in memo["alternatives"]:
         if a["issue_id"] not in issue_ids:
             problems.append(f"unknown alternative issue {a['issue_id']}")
-    stripped = re.sub(r"\[C\d+\]|[0-9a-f]{8}-[0-9a-f-]{27}", "", text)
+    stripped = re.sub(r"\[[CA]\d+\]|[0-9a-f]{8}-[0-9a-f-]{27}", "", text)
     ok = allowed_numbers(pack)
     for num in re.findall(r"(?<![\w.])\d[\d,]*(?:\.\d+)?", stripped):
         if num.replace(",", "") not in ok:

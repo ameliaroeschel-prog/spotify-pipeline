@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS failures (
     review_id TEXT, label_config TEXT, attempts INTEGER, reason TEXT, PRIMARY KEY (review_id, label_config));
 CREATE TABLE IF NOT EXISTS runs (
     run_id TEXT PRIMARY KEY, phase TEXT, started REAL, ended REAL, settings TEXT, summary TEXT);
+CREATE TABLE IF NOT EXISTS invalid_items (
+    review_id TEXT, run_id TEXT, retry_round INTEGER, reason TEXT, created REAL);
 CREATE TABLE IF NOT EXISTS stages (
     run_id TEXT, stage TEXT, started REAL, ended REAL, items_in INTEGER, items_out INTEGER, notes TEXT);
 """
@@ -36,6 +38,8 @@ def open_state(db_path):
     cols = {r[1] for r in con.execute("PRAGMA table_info(calls)")}
     if "service_tier" not in cols:                       # older runs (cp500) predate this column
         con.execute("ALTER TABLE calls ADD COLUMN service_tier TEXT DEFAULT 'standard'")
+    if "subtopic" not in {r[1] for r in con.execute("PRAGMA table_info(results)")}:
+        con.execute("ALTER TABLE results ADD COLUMN subtopic TEXT")
     return con
 
 

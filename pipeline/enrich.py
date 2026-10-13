@@ -36,8 +36,18 @@ def worst_case_cost(model, tier, items):
     return in_tokens * p["input"] + len(items) * C.OUT_TOKENS_PER_REVIEW * p["output"]
 
 
+def _normalized(text):
+    """Lowercase alphanumerics only, with a map back to original character positions."""
+    chars, index = [], []
+    for i, ch in enumerate(text):
+        if ch.isalnum():
+            chars.append(ch.lower())
+            index.append(i)
+    return "".join(chars), index
+
+
 def find_quote(text, quote):
-    """Exact substring check in code. Falls back to the full text for short reviews."""
+    """Exact substring check in code. The returned quote is ALWAYS an exact span of the source text."""
     if quote and quote.strip() and quote in text:
         return quote, "model"
     if len(text) <= C.SHORT_TEXT_CHARS:
@@ -49,19 +59,32 @@ def find_quote(text, quote):
         i = text.lower().find(stripped.lower())
         if i >= 0:
             return text[i:i + len(stripped)], "model_case_matched"
+        # The model sometimes "fixes" spacing/punctuation while copying: align on alphanumerics only,
+        # then return the ORIGINAL span between the first and last matched characters.
+        norm_text, index = _normalized(text)
+        norm_quote, _ = _normalized(stripped)
+        j = norm_text.find(norm_quote) if len(norm_quote) >= 8 else -1
+        if j >= 0:
+            return text[index[j]:index[j + len(norm_quote) - 1] + 1], "model_aligned"
     if len(text) <= C.FULL_TEXT_FALLBACK_CHARS:
         return text, "full_text_fallback"
     return None, None
 
 
+def is_policy_block(error):
+    """OpenAI rejects a whole request if any text in it trips its usage-policy filter."""
+    return bool(error) and "HTTP 400" in error and ("flagged" in error or "invalid_prompt" in error)
+
+
 def parse_line(line):
-    """'i|topic|intent|sev|sent|flag|quote' -> dict, or None. Quote is last so it may contain '|'."""
-    parts = line.strip().split("|", 6)
-    if len(parts) < 6:
+    """'i|topic|subtopic|intent|sev|sent|flag|quote' -> dict, or None. Quote is last so it may contain '|'."""
+    parts = line.strip().split("|", 7)
+    if len(parts) < 7:
         return None
     try:
-        return {"i": int(parts[0]), "t": parts[1].strip(), "n": parts[2].strip(), "v": int(parts[3]),
-                "s": int(parts[4]), "f": parts[5].strip() == "1", "q": parts[6] if len(parts) > 6 else ""}
+        return {"i": int(parts[0]), "t": parts[1].strip(), "u": parts[2].strip(), "n": parts[3].strip(),
+                "v": int(parts[4]), "s": int(parts[5]), "f": parts[6].strip() == "1",
+                "q": parts[7] if len(parts) > 7 else ""}
     except ValueError:
         return None
 
@@ -90,7 +113,8 @@ def parse_and_validate(result, batch):
         elif quote is None:
             bad[rid] = "quote_not_in_source"
         else:
-            good[rid] = {"topic": it["t"], "intent": it["n"], "severity": it["v"], "sentiment": it["s"] / 2,
+            sub = it["u"] if it["u"] in C.SUBTOPICS.get(it["t"], {}) else "general"   # off-list -> general
+            good[rid] = {"topic": it["t"], "subtopic": sub, "intent": it["n"], "severity": it["v"], "sentiment": it["s"] / 2,
                          "entities": entities_for(text), "evidence_quote": quote, "needs_review": it["f"],
                          "quote_source": source}
     for i, (rid, _) in by_index.items():
@@ -139,7 +163,7 @@ class Enricher:
         attempts = Attempts(self.model, self.tier)
         fn = lambda: call(self.provider, model=self.model, effort=C.EFFORT, instructions=C.ENRICH_INSTRUCTIONS,
                           user=C.enrich_user_message(items), schema=C.ENRICH_SCHEMA, schema_name="enrich",
-                          max_output_tokens=len(items) * C.OUT_TOKENS_PER_REVIEW,
+                          max_output_tokens=max(C.MIN_OUTPUT_TOKENS, len(items) * C.OUT_TOKENS_PER_REVIEW),
                           cache_key=C.ENRICH_PROMPT_VERSION, service_tier=self.tier)
         try:
             return batch, with_retries(fn, attempts), attempts, None
@@ -147,20 +171,24 @@ class Enricher:
             return batch, None, attempts, str(e)
 
     # ---- commit (main thread only: single writer, one transaction per batch) --
-    def commit(self, batch, result, attempts, error, retry_round):
+    def commit(self, batch, result, attempts, error, retry_round, isolate=False):
         review_ids = [rid for rid, _ in batch]
         good, bad = parse_and_validate(result, batch) if result else ({}, {rid: f"api_error:{error}" for rid in review_ids})
         with self.con:   # atomic: either the whole batch's results + logs land, or none do
+            self.con.executemany("INSERT INTO invalid_items VALUES (?,?,?,?,?)",
+                                 [(rid, self.run_id, int(retry_round), why[:200], time.time()) for rid, why in bad.items()])
             write_calls(self.con, attempts, self.run_id, "enrich", self.phase, self.label_config, review_ids)
             text_sha = dict(self.con.execute(
                 f"SELECT review_id, text_sha FROM reviews WHERE review_id IN ({','.join('?' * len(review_ids))})", review_ids))
             for rid, lab in good.items():
-                self.con.execute("INSERT OR IGNORE INTO results VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                self.con.execute("INSERT OR IGNORE INTO results (text_sha, label_config, origin_id, topic, intent,"
+                                 " sentiment, severity, entities, evidence_quote, needs_review, quote_source, request_id,"
+                                 " created, subtopic) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
                     text_sha[rid], self.label_config, rid, lab["topic"], lab["intent"], lab["sentiment"], lab["severity"],
                     json.dumps(lab["entities"]), lab["evidence_quote"], int(lab["needs_review"]), lab["quote_source"],
-                    attempts.items[-1]["request_id"], time.time()))
+                    attempts.items[-1]["request_id"], time.time(), lab["subtopic"]))
                 self.con.execute("UPDATE reviews SET status='completed' WHERE text_sha=? AND status='pending'", (text_sha[rid],))
-            if retry_round:   # second failure: quarantine with reason and attempt count
+            if retry_round and not isolate:   # second failure: quarantine with reason and attempt count
                 for rid, why in bad.items():
                     self.con.execute("INSERT OR REPLACE INTO failures VALUES (?,?,?,?)", (rid, self.label_config, 2, why))
                     self.con.execute("UPDATE reviews SET status='quarantined', reason=? WHERE text_sha=? AND status='pending'",
@@ -197,14 +225,20 @@ class Enricher:
                         reserve, rr = inflight.pop(fut)
                         batch, result, attempts, error = fut.result()
                         self.ledger.settle(reserve, attempts.total_cost())
-                        good, bad = self.commit(batch, result, attempts, error, rr)
+                        # A policy-blocked multi-review request is split into single-review requests, so
+                        # one offending text cannot quarantine its innocent neighbours.
+                        isolate = rr and result is None and is_policy_block(error) and len(batch) > 1
+                        good, bad = self.commit(batch, result, attempts, error, rr, isolate)
                         stats["completed_texts"] += len(good)
-                        if rr:
+                        if isolate:
+                            stats["policy_isolated"] = stats.get("policy_isolated", 0) + len(batch)
+                            queue.extend([item] for item in batch)
+                        elif rr:
                             stats["quarantined"] += len(bad)
                         elif bad:
                             stats["invalid_first_pass"] += len(bad)
                             bad_items = [(rid, t) for rid, t in batch if rid in bad]
-                            retry_queue.extend(bad_items[i:i + 10] for i in range(0, len(bad_items), 10))
+                            retry_queue.extend(bad_items[i:i + C.RETRY_BATCH_SIZE] for i in range(0, len(bad_items), C.RETRY_BATCH_SIZE))
                         stats["batches_done"] += 1
                         if stats["batches_done"] % 10 == 0 or total_batches <= 20:
                             print(f"[{self.phase}] batch {stats['batches_done']}/{total_batches}: +{len(good)} ok, "
