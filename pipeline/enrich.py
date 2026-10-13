@@ -89,15 +89,32 @@ def parse_line(line):
         return None
 
 
+def read_json_objects(text):
+    """Reads one or more back-to-back {"r": [...]} objects (the model occasionally emits two in a row,
+    which strict json.loads rejects as 'Extra data') and concatenates their lines. None if unreadable."""
+    decoder, pos, lines = json.JSONDecoder(), 0, []
+    text = text or ""
+    try:
+        while pos < len(text):
+            while pos < len(text) and text[pos].isspace():
+                pos += 1
+            if pos >= len(text):
+                break
+            obj, pos = decoder.raw_decode(text, pos)
+            lines.extend(obj["r"])
+    except (ValueError, KeyError, TypeError):
+        return lines or None
+    return lines
+
+
 def parse_and_validate(result, batch):
     """Returns ({review_id: label_dict}, {review_id: problem}). Never trusts model IDs blindly."""
     by_index = {i: (rid, text) for i, (rid, text) in enumerate(batch, 1)}
     good, bad = {}, {}
     if result["status"] != "completed":
         return good, {rid: f"incomplete_response:{result['incomplete_reason']}" for rid, _ in batch}
-    try:
-        lines = json.loads(result["text"])["r"]
-    except (ValueError, KeyError, TypeError):
+    lines = read_json_objects(result["text"])
+    if lines is None:
         return good, {rid: "unparseable_output" for rid, _ in batch}
     seen = set()
     for line in lines:

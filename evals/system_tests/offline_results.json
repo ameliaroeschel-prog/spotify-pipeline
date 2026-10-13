@@ -12,6 +12,10 @@
       "D": "missing_from_output",
       "E": "missing_from_output"
     },
+    "two_concatenated_json_objects_accepted": [
+      "A",
+      "B"
+    ],
     "truncated_response_rejects_all": "incomplete_response:max_output_tokens"
   },
   {

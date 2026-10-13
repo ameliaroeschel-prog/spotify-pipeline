@@ -87,6 +87,30 @@ class CalculatorTests(unittest.TestCase):
                              capture_output=True, text=True, check=True).stdout
         self.assertNotIn("WARNING:", out)
 
+    def test_refresh_checkpoint(self):
+        ap = calculator.argparse.ArgumentParser()
+        calculator.add_replay_args(ap)
+        ap.add_argument("--run-dir", nargs="+")
+        ap.add_argument("--label")
+        ap.add_argument("--out-dir")
+        args = ap.parse_args(["--run-dir", str(self.run_dir), "--out-dir", str(self.cost_dir), "--label", "Fixture 10K"])
+        cp = calculator.cmd_refresh(args)[0]
+        self.assertEqual(cp["texts"], 98)
+        self.assertAlmostEqual(cp["enrich_cost"], 0.001710, places=12)
+        self.assertAlmostEqual(cp["enrich_per_1k_texts"], 0.001710 / 98 * 1000, places=12)
+        self.assertAlmostEqual(cp["throughput_texts_per_s"], 98 / 38.0, places=9)    # enrich stage wall time
+        self.assertTrue((self.cost_dir / "refresh_fixture-10k.md").exists())
+        self.assertTrue((self.cost_dir / "refresh_fixture-10k.json").exists())
+
+    def test_planned_verify_rate_used_for_projection(self):
+        a, _ = self.replay()                       # default planned rate 0.01
+        b, _ = self.replay("--verify-rate", "0.02")
+        self.assertAlmostEqual(a["projection"]["inputs"]["measured_verify_rate"], 10 / 98, places=12)
+        self.assertEqual(a["projection"]["inputs"]["verify_rate"], 0.01)
+        self.assertAlmostEqual(b["projection"]["scenarios"]["base"]["reuse"]["stages"]["verify"],
+                               2 * a["projection"]["scenarios"]["base"]["reuse"]["stages"]["verify"], places=12)
+        self.assertEqual(a["measured"]["cold"]["total"]["cost"], b["measured"]["cold"]["total"]["cost"])
+
     def test_pilot_requires_yes(self):
         out = subprocess.run([sys.executable, str(COST / "calculator.py"), "pilot", "--budget", "0.25",
                               "--run-dir", "runs/does-not-matter"], capture_output=True, text=True, check=True).stdout

@@ -488,7 +488,8 @@ def budget_warnings(proj, budget):
         for label in ("reuse", "no_reuse"):
             total = res[label]["total"]
             if total is None:
-                warnings.append(f"WARNING: {name}/{label} total is UNKNOWN (unresolved usage), cannot confirm it fits the ${budget:,.2f} budget")
+                warnings.append(f"WARNING: {name}/{label} total is UNKNOWN (a stage was not measured or has unresolved "
+                                f"usage), cannot confirm it fits the ${budget:,.2f} budget")
             elif total > budget:
                 warnings.append(f"WARNING: {name} scenario ({label.replace('_', '-')}) projects {money(total, 2)}, "
                                 f"which EXCEEDS the ${budget:,.2f} budget")
@@ -566,7 +567,7 @@ def render_report(res, args):
         f"{args.rate_multiplier:g} | retry rate {'measured' if args.retry_rate is None else args.retry_rate} | "
         f"max fallback fraction {args.fallback_fraction:g} ({args.fallback_model}) | output-token cap "
         f"{args.output_token_cap}/review | verify rate "
-        f"{'measured' if args.verify_rate is None else args.verify_rate} | projected rows {args.projected_rows:,}\n")
+        f"{args.verify_rate:g} (planned full run) | projected rows {args.projected_rows:,}\n")
     if any("SYNTHETIC" in str(c.get("run_id")) for c in res["calls"]):
         add("> **SYNTHETIC TEST FIXTURE - not a measured pilot.** Calls, tokens and times are invented for testing.\n")
     if res["warnings"]:
@@ -680,8 +681,9 @@ def render_report(res, args):
         f"{money(sum(epu.values()) if epu else None, 8)} (input {money(epu and epu['input'], 9)}, cached "
         f"{money(epu and epu['cached_input'], 9)}, output {money(epu and epu['output'], 9)}). Scales with distinct texts.")
     vpu = pi["verify_per_unit"]
-    add(f"- verify: rate {pi['verify_rate']:.3f} of texts (measured {pi['measured_verify_rate']:.3f}); cost per verified "
-        f"review {money(sum(vpu.values()) if vpu else None, 8)}. Scales with verify-rate x texts.")
+    add(f"- verify: the pilot verified {pi['measured_verify_rate']:.0%} of texts by design; the full run plans "
+        f"{pi['verify_rate']:.0%} (`--verify-rate`). Measured cost per verified review "
+        f"{money(sum(vpu.values()) if vpu else None, 8)}. Scales with verify-rate x texts.")
     add("- group, memo: fixed overhead, counted **once** (not multiplied by the number of rows).")
     add("- ingest, rank, export: local code, $0 API (local compute unknown).")
     add(f"- retries: measured enrich retry rate {pi['measured_retry']:.3f} (failed / succeeded attempts); base uses "
@@ -692,25 +694,7 @@ def render_report(res, args):
     add(f"- ceiling: conservative plus every enriched text using the full output cap of {args.output_token_cap} tokens.")
     add(f"- rate multiplier {args.rate_multiplier:g} applies to every API price; it never changes time or local compute.\n")
 
-    add("| Scenario | enrich | verify | group | memo | **Total with reuse** | Total without reuse | Budget |")
-    add("|---|---|---|---|---|---|---|---|")
-    for name, r in proj["scenarios"].items():
-        s = r["reuse"]["stages"]
-        tot, tot_nr = r["reuse"]["total"], r["no_reuse"]["total"]
-        flag = "unknown" if tot is None else ("**OVER**" if tot > args.budget or (tot_nr or 0) > args.budget else "fits")
-        add(f"| {name} | {money(s['enrich'], 2)} | {money(s['verify'], 2)} | {money(s['group'], 4)} | "
-            f"{money(s['memo'], 4)} | **{money(tot, 2)}** | {money(tot_nr, 2)} | {flag} |")
-    add("")
-
-    add(f"**Time projection** (measured cold stage times; {proj['workers']} worker(s) vs {proj['pilot_workers']} in the pilot):\n")
-    add("| Stage | Pilot seconds | Rule | Base | Conservative |\n|---|---|---|---|---|")
-    for stage, t in proj["time"].items():
-        add(f"| {stage} | {secs(t.get('measured'))} | {t['rule']} | {hours(t['base'])} | {hours(t['conservative'])} |")
-    tt = proj["time_totals"]
-    partial = f" + unmeasured: {', '.join(tt['missing'])}" if tt["missing"] else ""
-    add(f"| **total** | | | **{hours(tt['base'])}{partial}** | **{hours(tt['conservative'])}{partial}** |\n")
-    add("Worker speedup is modeled as linear and is an upper bound: rate limits, retries and contention can make more "
-        "workers slower. Summed call durations are not wall-clock time.\n")
+    L.extend(projection_tables(proj, args, "pilot"))
 
     add("## 3. Formulas and sources\n")
     add("- `uncached input = input_tokens - cached_input_tokens`; `cached input = cached_input_tokens`; "
@@ -723,6 +707,30 @@ def render_report(res, args):
         "[`pilot_stages.jsonl`](pilot_stages.jsonl), [`pilot_runs.jsonl`](pilot_runs.jsonl), "
         "[`usage.csv`](usage.csv), [`rates.csv`](rates.csv).")
     return "\n".join(L) + "\n"
+
+
+def projection_tables(proj, args, source):
+    """Markdown lines: the cost scenario table and the time projection (shared by replay and refresh)."""
+    L = ["| Scenario | enrich | verify | group | memo | **Total with reuse** | Total without reuse | Budget |",
+         "|---|---|---|---|---|---|---|---|"]
+    for name, r in proj["scenarios"].items():
+        s = r["reuse"]["stages"]
+        tot, tot_nr = r["reuse"]["total"], r["no_reuse"]["total"]
+        flag = "unknown" if tot is None else ("**OVER**" if tot > args.budget or (tot_nr or 0) > args.budget else "fits")
+        L.append(f"| {name} | {money(s['enrich'], 2)} | {money(s['verify'], 2)} | {money(s['group'], 4)} | "
+                 f"{money(s['memo'], 4)} | **{money(tot, 2)}** | {money(tot_nr, 2)} | {flag} |")
+    L.append("")
+    L.append(f"**Time projection** (measured stage wall times; {proj['workers']} worker(s) vs "
+             f"{proj['pilot_workers']} in the {source}):\n")
+    L.append("| Stage | Measured seconds | Rule | Base | Conservative |\n|---|---|---|---|---|")
+    for stage, t in proj["time"].items():
+        L.append(f"| {stage} | {secs(t.get('measured'))} | {t['rule']} | {hours(t['base'])} | {hours(t['conservative'])} |")
+    tt = proj["time_totals"]
+    partial = f" + unmeasured: {', '.join(tt['missing'])}" if tt["missing"] else ""
+    L.append(f"| **total** | | | **{hours(tt['base'])}{partial}** | **{hours(tt['conservative'])}{partial}** |\n")
+    L.append("Worker speedup is modeled as linear and is an upper bound: rate limits, retries and contention can make "
+             "more workers slower. Summed call durations are not wall-clock time.\n")
+    return L
 
 
 def hours(seconds):
@@ -746,6 +754,8 @@ def print_summary(res, args):
               f"{secs(e2e['seconds']) if e2e else 'not recorded'}")
     print(f"Projection for {p['scope']['rows']:,} rows (rate multiplier {args.rate_multiplier:g}, "
           f"{p['workers']} worker(s)):")
+    print(f"  verify: pilot verified {p['inputs']['measured_verify_rate']:.0%} of texts by design; "
+          f"full run plans {p['inputs']['verify_rate']:.0%} (--verify-rate)")
     for name, r in p["scenarios"].items():
         print(f"  {name:12s} reuse {money(r['reuse']['total'], 2):>12s}   no-reuse {money(r['no_reuse']['total'], 2):>12s}")
     tt = p["time_totals"]
@@ -776,8 +786,9 @@ def table_columns(con, table):
     return [r[1] for r in con.execute(f"PRAGMA table_info({table})")]
 
 
-def export(run_dir, out_dir, cold_run_id=None, warm_run_ids=None, rates_path=None):
-    run_dir, out_dir = Path(run_dir), Path(out_dir)
+def load_run(run_dir, cold_run_id=None, warm_run_ids=None):
+    """Read a run folder's state.db (read-only) into calls / records / stages / runs lists."""
+    run_dir = Path(run_dir)
     db = run_dir / "state.db"
     if not db.exists():
         raise SystemExit(f"{db} not found")
@@ -893,10 +904,10 @@ def export(run_dir, out_dir, cold_run_id=None, warm_run_ids=None, rates_path=Non
             d["cold_or_warm"] = label.get(d["run_id"]) or label_by_time(d.get("started")) or "other"
             d["source"] = "stages table"
             stages.append(d)
-    runs_with_stages = {s["run_id"] for s in stages}
+    logged = {(s["run_id"], s["stage"]) for s in stages}
     spans = {}
     for c in calls:
-        if c["run_id"] in runs_with_stages or c.get("started") is None or c.get("ended") is None:
+        if (c["run_id"], c["role"]) in logged or c.get("started") is None or c.get("ended") is None:
             continue
         s = spans.setdefault((c["run_id"], c["role"]), [c["started"], c["ended"], c["cold_or_warm"]])
         s[0], s[1] = min(s[0], c["started"]), max(s[1], c["ended"])
@@ -918,7 +929,14 @@ def export(run_dir, out_dir, cold_run_id=None, warm_run_ids=None, rates_path=Non
                                "started": min(r["started"] for r in mine), "ended": max(r["ended"] for r in mine),
                                "cold_or_warm": name, "source": "runs table start/end"})
     con.close()
+    return {"calls": calls, "records": records, "stages": stages, "runs": runs, "db": db}
 
+
+def export(run_dir, out_dir, cold_run_id=None, warm_run_ids=None, rates_path=None):
+    """Offline: write a run's evidence into cost/ (pilot_*.jsonl, usage.csv)."""
+    out_dir = Path(out_dir)
+    data = load_run(run_dir, cold_run_id, warm_run_ids)
+    calls, records, stages, runs, db = data["calls"], data["records"], data["stages"], data["runs"], data["db"]
     out_dir.mkdir(parents=True, exist_ok=True)
     write_jsonl(out_dir / "pilot_calls.jsonl", calls)
     write_jsonl(out_dir / "pilot_records.jsonl", records)
@@ -931,6 +949,148 @@ def export(run_dir, out_dir, cold_run_id=None, warm_run_ids=None, rates_path=Non
     for r in runs:
         print(f"  run {r['run_id']}: {r['cold_or_warm']}")
     return {"calls": calls, "records": records, "stages": stages, "runs": runs}
+
+
+# ----------------------------------------------------------------------------------------------
+# Refresh: re-estimate the full run from a larger checkpoint (500, 10,000 reviews). Offline.
+# ----------------------------------------------------------------------------------------------
+
+def slug(text):
+    out = "".join(ch if ch.isalnum() else "-" for ch in text.lower())
+    while "--" in out:
+        out = out.replace("--", "-")
+    return out.strip("-")
+
+
+def checkpoint(run_dir, args, rates):
+    """Measure one checkpoint run folder and project the full run from it.
+    All runs in the folder count as one measurement (a later resume/warm run adds no new calls)."""
+    data = load_run(run_dir)
+    for row in data["calls"] + data["stages"] + data["runs"]:
+        row["cold_or_warm"] = "cold"
+    measured = summarise_calls(data["calls"], rates, args.rate_multiplier)
+    measured["pilot_rows"] = len(data["records"])
+    # Time only the runs that did model work; a later warm/resume run on the same folder would add ~0 s
+    # stages and blur the measured throughput.
+    working = {c["run_id"] for c in data["calls"]}
+    stage_secs, _ = stage_times([s for s in data["stages"] if s["stage"] != "end_to_end"
+                                 and (s.get("run_id") in working or not working)], "cold")
+    settings = run_settings(data["runs"], "cold")
+    proj = project(measured, stage_secs, settings, rates, args)
+
+    enrich = measured["cold"]["roles"]["enrich"]
+    texts = proj["inputs"]["enrich_units"]
+    invalid = sum((r.get("summary") or {}).get("invalid_first_pass") or 0 for r in data["runs"])
+    quarantined = sum(1 for r in data["records"] if r.get("status") == "quarantined")
+    failed = sum(1 for r in data["records"] if r.get("status") == "failed")
+    enrich_secs = stage_secs.get("enrich")
+    stage_sources = sorted({s.get("source", "") for s in data["stages"] if s["stage"] == "enrich"})
+    group, memo = measured["cold"]["roles"]["group"], measured["cold"]["roles"]["memo"]
+    vpu = proj["inputs"]["verify_per_unit"]
+    pending = sum(1 for r in data["records"] if r.get("status") == "failed" and r.get("reason") == "status_pending")
+    base_stages = proj["scenarios"]["base"]["reuse"]["stages"]
+    variable = None if base_stages["enrich"] is None or base_stages["verify"] is None else \
+        base_stages["enrich"] + base_stages["verify"]
+    return {
+        "label": Path(run_dir).name + (" (in progress)" if pending and not data["runs"] else ""),
+        "run_dir": str(run_dir), "pending_reviews": pending, "base_enrich_plus_verify": variable,
+        "enrich_label_config": ", ".join(sorted(enrich["label_configs"])) or "none",
+        "enrich_tiers": ", ".join(sorted(enrich["tiers"])) or "none",
+        "workers": settings.get("workers"),
+        "reviews": len(data["records"]), "completed": len(data["records"]) - quarantined - failed,
+        "quarantined": quarantined, "failed": failed,
+        "texts": texts, "enrich_cost": enrich["cost"], "enrich_unresolved": enrich["unresolved"],
+        "enrich_per_1k_texts": (enrich["cost"] / texts * 1000) if texts else None,
+        "enrich_attempts": enrich["attempts"], "enrich_failed_attempts": enrich["failed"],
+        "retry_rate": proj["inputs"]["measured_retry"],
+        "invalid_first_pass": invalid, "invalid_rate": (invalid / texts) if texts else None,
+        "enrich_wall_seconds": enrich_secs, "enrich_time_source": ", ".join(stage_sources),
+        "throughput_texts_per_s": (texts / enrich_secs) if texts and enrich_secs else None,
+        "verify_per_review": sum(vpu.values()) if vpu else None,
+        "measured_verify_rate": proj["inputs"]["measured_verify_rate"],
+        "group_cost": None if (group["unresolved"] or not group["attempts"]) else group["cost"],
+        "memo_cost": None if (memo["unresolved"] or not memo["attempts"]) else memo["cost"],
+        "projection": proj,
+    }
+
+
+def cmd_refresh(args):
+    rates = load_rates(args.rates)
+    cps = [checkpoint(d, args, rates) for d in args.run_dir]
+    label = args.label or " + ".join(Path(d).name for d in args.run_dir)
+    out_md = Path(args.out_dir) / f"refresh_{slug(label)}.md"
+    out_json = out_md.with_suffix(".json")
+    warnings = []
+    for c in cps:
+        warnings += [f"{c['label']}: {w}" for w in budget_warnings(c["projection"], args.budget)]
+
+    L = [f"# Full-run estimate refresh: {label}\n",
+         "Generated offline by `python3 cost/calculator.py refresh` from each checkpoint's saved `state.db` "
+         "(no API calls). Costs are recomputed from usage x [`rates.csv`](rates.csv).\n",
+         f"**Controls:** budget ${args.budget:,.2f} | max workers {args.max_workers or 'checkpoint run'} | "
+         f"planned verify rate {args.verify_rate:g} | rate multiplier {args.rate_multiplier:g} | max fallback "
+         f"{args.fallback_fraction:g} ({args.fallback_model}) | projected rows {args.projected_rows:,} "
+         f"({scope(args.projected_rows)['distinct']:,} distinct texts)\n"]
+    L += ["> " + "\n> ".join(warnings) + "\n"] if warnings else [f"> All scenarios fit the ${args.budget:,.2f} budget.\n"]
+    L += ["## Is the estimate converging?\n",
+          "| Checkpoint | Enrich config / tier | Workers | Reviews | Texts enriched | Enrich $ per 1k texts | "
+          "Throughput (texts/s, wall clock) | Invalid first pass | Retry rate | Verify $ per review | "
+          "Projected enrich+verify (base) | Projected full run: base | conservative |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for c in cps:
+        sc = c["projection"]["scenarios"]
+        L.append(f"| {c['label']} | {c['enrich_label_config']} / {c['enrich_tiers']} | {c['workers']} | {c['reviews']:,} | "
+                 f"{c['texts']:,} | {money(c['enrich_per_1k_texts'], 4)} | {num(c['throughput_texts_per_s'], 2)} | "
+                 f"{c['invalid_first_pass']:,} ({c['invalid_rate'] or 0:.1%}) | {c['retry_rate']:.3f} | "
+                 f"{money(c['verify_per_review'], 6)} | {money(c['base_enrich_plus_verify'], 2)} | "
+                 f"{money(sc['base']['reuse']['total'], 2)} | "
+                 f"{money(sc['conservative']['reuse']['total'], 2)} |")
+    L.append("\nRows use different configurations when the label_config or tier differs, so they are not strictly "
+             "comparable: a change in prompt/schema version or flex vs standard pricing moves the cost per text. "
+             "`unknown` means a stage (often group/memo) was not run in that checkpoint, so its cost is not "
+             "counted as $0. Throughput is texts / enrich-stage wall-clock seconds at that run's worker count.\n")
+    for c in cps:
+        p = c["projection"]
+        L += [f"## {c['label']}: projection for {p['scope']['rows']:,} rows\n",
+              f"- Records: {c['completed']:,} completed, {c['quarantined']:,} quarantined, {c['failed']:,} failed.",
+              f"- Enrich: {c['enrich_attempts']} attempts ({c['enrich_failed_attempts']} failed, "
+              f"{c['enrich_unresolved']} with unknown usage), {money(c['enrich_cost'])} for {c['texts']:,} texts; "
+              f"wall time {secs(c['enrich_wall_seconds'])} ({c['enrich_time_source']}).",
+              f"- Verify: checkpoint verified {c['measured_verify_rate']:.1%} of texts; full run plans "
+              f"{p['inputs']['verify_rate']:.1%}.",
+              f"- Group (fixed): {money(c['group_cost'])}; memo (fixed): {money(c['memo_cost'])}.\n"]
+        L += projection_tables(p, args, "checkpoint run")
+    out_md.write_text("\n".join(L) + "\n", encoding="utf-8")
+
+    def jsonable(c):
+        p = c["projection"]
+        return {**{k: v for k, v in c.items() if k != "projection"},
+                "projection": {"scope": p["scope"], "workers": p["workers"],
+                               "scenarios": {n: {"assumptions": r["assumptions"], "reuse": r["reuse"],
+                                                 "no_reuse": r["no_reuse"]} for n, r in p["scenarios"].items()},
+                               "time_seconds": p["time_totals"], "inputs": p["inputs"]}}
+    controls = {k: getattr(args, k) for k in ("budget", "max_workers", "verify_rate", "rate_multiplier",
+                                              "fallback_fraction", "fallback_model", "output_token_cap",
+                                              "retry_rate", "projected_rows")}
+    out_json.write_text(json.dumps({"label": label, "controls": controls, "checkpoints": [jsonable(c) for c in cps],
+                                    "warnings": warnings}, indent=2), encoding="utf-8")
+
+    print(f"Refresh: {label}  (planned verify rate {args.verify_rate:g}, rate multiplier {args.rate_multiplier:g})")
+    print(f"  {'checkpoint':12s} {'texts':>7s} {'$/1k texts':>11s} {'texts/s':>8s} {'workers':>7s} "
+          f"{'enr+ver':>9s} {'base':>9s} {'conserv.':>9s}  config")
+    for c in cps:
+        sc = c["projection"]["scenarios"]
+        print(f"  {c['label']:12s} {c['texts']:>7,} {money(c['enrich_per_1k_texts'], 4):>11s} "
+              f"{num(c['throughput_texts_per_s'], 2):>8s} {str(c['workers']):>7s} "
+              f"{money(c['base_enrich_plus_verify'], 2):>9s} {money(sc['base']['reuse']['total'], 2):>9s} {money(sc['conservative']['reuse']['total'], 2):>9s}  "
+              f"{c['enrich_label_config']} / {c['enrich_tiers']}")
+        tt = c["projection"]["time_totals"]
+        print(f"  {'':12s} time base/conservative: {hours(tt['base'])} / {hours(tt['conservative'])} at "
+              f"{c['projection']['workers']} worker(s)" + (f" (unmeasured: {', '.join(tt['missing'])})" if tt["missing"] else ""))
+    for w in warnings:
+        print(w)
+    print(f"Wrote {out_md} and {out_json.name}")
+    return cps
 
 
 # ----------------------------------------------------------------------------------------------
@@ -988,7 +1148,8 @@ def add_replay_args(p):
     p.add_argument("--fallback-model", default="claude-sonnet-5", help="fallback model priced in rates.csv")
     p.add_argument("--output-token-cap", type=int, default=60, help="output tokens per review cap (ceiling case)")
     p.add_argument("--retry-rate", type=float, default=None, help="base retry overhead (default: measured)")
-    p.add_argument("--verify-rate", type=float, default=None, help="fraction of texts verified (default: measured)")
+    p.add_argument("--verify-rate", type=float, default=0.01,
+                   help="PLANNED fraction of texts verified in the full run (default 0.01; the pilot's own rate is shown separately)")
     p.add_argument("--rate-multiplier", type=float, default=1.0, help="multiply every API price (2 = double)")
     p.add_argument("--projected-rows", type=int, default=FULL_ROWS, help=f"rows in the full run (default {FULL_ROWS:,})")
     p.add_argument("--local-usd-per-hour", type=float, default=None, help="optional labelled local-compute estimate")
@@ -1001,7 +1162,7 @@ def add_replay_args(p):
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
-    if not argv or argv[0] not in ("replay", "export", "pilot"):
+    if not argv or argv[0] not in ("replay", "export", "pilot", "refresh"):
         argv = ["replay"] + argv
     ap = argparse.ArgumentParser(description="100-review cost/runtime calculator (offline replay by default)")
     sub = ap.add_subparsers(dest="command")
@@ -1011,6 +1172,11 @@ def main(argv=None):
     ex.add_argument("--cold-run-id")
     ex.add_argument("--warm-run-id", action="append", help="repeatable")
     ex.add_argument("--out-dir", default=str(COST_DIR))
+    rf = sub.add_parser("refresh", help="offline: re-estimate the full run from checkpoint run dirs (500, 10k)")
+    add_replay_args(rf)
+    rf.add_argument("--run-dir", nargs="+", required=True, help="one or more checkpoint run folders")
+    rf.add_argument("--label", default=None, help='name for the output files, e.g. "10K checkpoint"')
+    rf.add_argument("--out-dir", default=str(COST_DIR))
     pi = sub.add_parser("pilot", help="PAID: run the real pipeline cold + warm on data/cost_100.csv, then export")
     pi.add_argument("--budget", type=float, required=True, help="hard USD cap across both runs, e.g. 0.25")
     pi.add_argument("--run-dir", default="runs/pilot")
@@ -1022,6 +1188,8 @@ def main(argv=None):
     args = ap.parse_args(argv)
     if args.command == "export":
         export(args.run_dir, args.out_dir, args.cold_run_id, args.warm_run_id)
+    elif args.command == "refresh":
+        cmd_refresh(args)
     elif args.command == "pilot":
         cmd_pilot(args)
     else:

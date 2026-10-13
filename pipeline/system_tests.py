@@ -37,11 +37,15 @@ def test_malformed_output():
     good, bad = parse_and_validate(result, batch)
     expected_bad = {"B": "invalid_label_values", "C": "quote_not_in_source", "D": "missing_from_output",
                     "E": "missing_from_output"}
+    doubled = parse_and_validate({"status": "completed", "incomplete_reason": None, "text":
+        json.dumps({"r": ["1|playback|general|complaint|4|-2|0|"]}) + json.dumps({"r": ["2|other|general|praise|1|2|0|"]})},
+        batch[:2])
     truncated = parse_and_validate({"status": "incomplete", "incomplete_reason": "max_output_tokens", "text": ""}, batch)
     return {"name": "malformed_output", "synthetic": True,
             "passed": set(good) == {"A"} and good["A"]["topic"] == "playback" and bad == expected_bad
+                      and set(doubled[0]) == {"A", "B"}
                       and set(truncated[1]) == {"A", "B", "C", "D", "E"},
-            "accepted": list(good), "rejected": bad,
+            "accepted": list(good), "rejected": bad, "two_concatenated_json_objects_accepted": sorted(doubled[0]),
             "truncated_response_rejects_all": sorted(truncated[1].values())[0]}
 
 

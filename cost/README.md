@@ -11,6 +11,7 @@ and take**? It is plain Python (standard library only) and needs no API key to c
 | **Offline replay (default)** - recompute every number from saved evidence and write `report.md` | `python3 cost/calculator.py` | No. No key, no network. |
 | **Export** - copy saved evidence from a run folder's `state.db` into this folder | `python3 cost/calculator.py export --run-dir runs/pilot` | No. Reads the database read-only. |
 | **Explicit paid pilot** - run the real pipeline cold, then warm, then export | `python3 cost/calculator.py pilot --budget 0.25 --yes` | **Yes** (capped at `--budget` across both runs) |
+| **Refresh the estimate** from bigger checkpoints (500, 10,000 reviews) | `python3 cost/calculator.py refresh --run-dir runs/cp500 runs/cp10k` | No. Reads each `state.db` read-only. |
 
 Without `--yes` the pilot command only prints its plan. Opening or importing `calculator.py` never
 starts paid calls. The pilot refuses to run if the input checksum does not match
@@ -38,13 +39,29 @@ measured 100-review numbers stay exactly the same.
 | `--fallback-model` | claude-sonnet-5 | Which `rates.csv` model prices the fallback. |
 | `--output-token-cap` | 60 | Output tokens per review; the "ceiling" case assumes every review uses all of it. |
 | `--retry-rate` | measured | Extra attempts per successful one (0.1 = 10% more calls). |
-| `--verify-rate` | measured | Share of texts sent to the verify stage. |
+| `--verify-rate` | 0.01 | **Planned** share of texts verified in the full run. The pilot verified 20% on purpose (to measure quality), so the report shows both rates and the projection uses the planned one. |
 | `--rate-multiplier` | 1 | Multiplies every API price. `2` doubles API spend; time and local compute do not change. |
 | `--projected-rows` | 660,622 | Size of the full run. |
 | `--local-usd-per-hour` | none | Optional, labelled estimate for laptop time. Without it, local compute shows as unknown. |
 | `--out` | `cost/report.md` | Write the report somewhere else (handy for experiments). |
 
 Example: `python3 cost/calculator.py --rate-multiplier 2 --max-workers 2 --out /tmp/report_2x.md`
+
+## Refreshing the estimate (500 and 10,000 reviews)
+
+100 reviews gives a first guess. The brief asks to refresh it after the 500- and 10,000-review checkpoints
+before starting the full run. `refresh` reads each checkpoint's saved run and, for each one, computes:
+
+- enrichment cost per distinct text (shown per 1,000 texts),
+- throughput: texts per wall-clock second at that run's worker count, from the stage timer (not summed call times),
+- verify cost per verified review, the fixed group and memo cost, and retry and invalid-answer rates,
+- the same base, conservative and ceiling projection for 660,622 rows.
+
+It writes `refresh_<label>.md` and `refresh_<label>.json`. When several run folders are given, the first
+table shows whether the estimate is **converging**. Each row is labelled with its prompt/schema version
+and pricing tier, because a change in configuration changes the cost per text. A stage that a checkpoint
+never ran shows as `unknown`. A run that is still going is labelled `(in progress)`. It takes the same flags as the replay,
+e.g. `--label "10K checkpoint" --max-workers 12 --budget 10`.
 
 ## How the money is calculated
 
@@ -81,4 +98,5 @@ bill, but they still use hardware and electricity. That cost is reported as **un
 | `pilot_runs.jsonl` | Run settings (provider, effort, batch size, workers, budget). |
 | `usage.csv` | Each attempt split into billing items and matched to a `rates.csv` row. |
 | `report.md` | The measured table and the full-run estimate. Written by the replay. |
+| `refresh_*.md` / `.json` | Full-run estimates refreshed from the 500 and 10,000 checkpoints. |
 | `tests/` | A **synthetic** fixture (invented numbers) and offline tests: `python3 -m unittest discover -s cost/tests -v` |
