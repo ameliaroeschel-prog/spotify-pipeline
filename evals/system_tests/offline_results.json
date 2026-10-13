@@ -1,0 +1,66 @@
+[
+  {
+    "name": "malformed_output",
+    "synthetic": true,
+    "passed": true,
+    "accepted": [
+      "A"
+    ],
+    "rejected": {
+      "B": "invalid_label_values",
+      "C": "quote_not_in_source",
+      "D": "missing_from_output",
+      "E": "missing_from_output"
+    },
+    "truncated_response_rejects_all": "incomplete_response:max_output_tokens"
+  },
+  {
+    "name": "planted_error",
+    "synthetic": true,
+    "planted": 10,
+    "caught": 10,
+    "passed": true,
+    "planted_cases": {
+      "01124066-b5dd-4c79-8618-d1bea99d197a": {
+        "true_topic": "playback",
+        "planted_topic": "billing"
+      },
+      "0658feaa-5bec-416e-b6b0-3de2a4c14580": {
+        "true_topic": "catalog",
+        "planted_topic": "other"
+      },
+      "065c418e-7f18-42a3-b241-fe693b7a2b0c": {
+        "true_topic": "playback",
+        "planted_topic": "billing"
+      },
+      "0b716a9d-85bf-4f4e-8e2e-be71e4a379a6": {
+        "true_topic": "other",
+        "planted_topic": "playback"
+      },
+      "0d9c62d1-2b53-4887-8156-a28eeac86e82": {
+        "true_topic": "other",
+        "planted_topic": "playback"
+      },
+      "1cdc5bb2-8e8d-4267-8853-6c1dd4c7ef13": {
+        "true_topic": "playback",
+        "planted_topic": "billing"
+      },
+      "23de7958-ccb0-4356-bc12-094935e6857d": {
+        "true_topic": "other",
+        "planted_topic": "playback"
+      },
+      "28a441b5-1d54-4a5d-9df3-cbc84d21527c": {
+        "true_topic": "usability",
+        "planted_topic": "catalog"
+      },
+      "2c3b2ca3-32b0-435f-aef5-84efafce6606": {
+        "true_topic": "other",
+        "planted_topic": "playback"
+      },
+      "311b200f-e6bc-429e-9944-4d3a460e84ee": {
+        "true_topic": "other",
+        "planted_topic": "playback"
+      }
+    }
+  }
+]

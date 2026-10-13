@@ -135,7 +135,15 @@ def call_mock(user=None, text=None, questions=None, **_):
     return {**base, "text": json.dumps({"r": lines})}
 
 
+_FAULTS = {"remaining": int(os.environ.get("FAULT_INJECT_TRANSIENT", "0"))}
+
+
 def call(provider, api="responses", **kwargs):
+    # Test hook: FAULT_INJECT_TRANSIENT=N makes the next N attempts fail as if the API returned a 503,
+    # BEFORE any request is sent (so no charge). Used only by the documented retry test.
+    if _FAULTS["remaining"] > 0:
+        _FAULTS["remaining"] -= 1
+        raise TransientError("injected test fault: simulated HTTP 503 (no request sent)")
     if provider == "mock":
         return call_mock(**kwargs)
     if provider == "openai":
