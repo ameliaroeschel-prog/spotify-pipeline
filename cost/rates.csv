@@ -1,0 +1,12 @@
+provider,model,service_tier,item,unit,price_per_unit_usd,price_per_million_usd,source_url,checked_date,notes
+openai,gpt-6-luna,standard,input,token,0.0000001,0.10,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,uncached input tokens (input_tokens minus cached_input_tokens)
+openai,gpt-6-luna,standard,cached_input,token,0.00000001,0.01,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,provider prompt-cache hits (cached_input_tokens)
+openai,gpt-6-luna,standard,output,token,0.0000005,0.50,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,output tokens; reasoning tokens are already included
+openai,gpt-6-luna,flex,input,token,0.00000005,0.05,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,derived: 50% of standard per OpenAI flex pricing - verify
+openai,gpt-6-luna,flex,cached_input,token,0.000000005,0.005,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,derived: 50% of standard per OpenAI flex pricing - verify
+openai,gpt-6-luna,flex,output,token,0.00000025,0.25,https://developers.openai.com/api/docs/models/gpt-6-luna,2026-10-13,derived: 50% of standard per OpenAI flex pricing - verify
+openai,gpt-6-luna,decisions,input,token,0.0000001,0.10,https://developers.openai.com/api/docs/guides/decisions,2026-10-13,Decisions API (verify role) bills input only
+openai,gpt-6-luna,decisions,cached_input,token,0.0000001,0.10,https://developers.openai.com/api/docs/guides/decisions,2026-10-13,no cached discount assumed (billed as normal input; matches pipeline/config.py)
+openai,gpt-6-luna,decisions,output,token,0,0,https://developers.openai.com/api/docs/guides/decisions,2026-10-13,Decisions API has no output-token charge
+anthropic,claude-sonnet-5,standard,input,token,0.000002,2.00,https://www.anthropic.com/news/claude-sonnet-5,2026-09-29,projection only: hypothetical stronger-model fallback (date from GRADING_CONTRACT.md)
+anthropic,claude-sonnet-5,standard,output,token,0.00001,10.00,https://www.anthropic.com/news/claude-sonnet-5,2026-09-29,projection only: hypothetical stronger-model fallback (date from GRADING_CONTRACT.md)

@@ -100,7 +100,7 @@ def call_decisions(model, text, questions, timeout=60, **_):
     data, request_id = post_json(DECISIONS_URL, {"model": model, "input": text, "questions": questions}, timeout)
     answers = {a.get("name"): a for a in data.get("answers", [])}
     return {"request_id": request_id, "status": "completed", "incomplete_reason": None, "service_tier": "standard",
-            "answers": answers, "text": json.dumps(answers), "usage": _usage(data.get("usage") or {})}
+            "api": "decisions", "answers": answers, "text": json.dumps(answers), "usage": _usage(data.get("usage") or {})}
 
 
 _MOCK_RULES = [("access", r"log ?in|password|account|sign ?up"), ("billing", r"premium|pay|price|charg|subscri"),
@@ -127,7 +127,7 @@ def call_mock(user=None, text=None, questions=None, **_):
         t, n, v, s = _mock_label(text)
         answers = {"topic": {"choice": t}, "intent": {"choice": n}, "severity": {"choice": str(v)},
                    "sentiment": {"score": s + 2}}
-        return {**base, "answers": answers, "text": json.dumps(answers)}
+        return {**base, "api": "decisions", "answers": answers, "text": json.dumps(answers)}
     lines = []
     for i, t in re.findall(r"<r i=(\d+)[^>]*>(.*?)</r>", user or "", flags=re.S):
         topic, intent, sev, sent = _mock_label(t)

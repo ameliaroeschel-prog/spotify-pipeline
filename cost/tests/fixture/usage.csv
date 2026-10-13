@@ -1,0 +1,19 @@
+attempt_id,request_id,run_id,cold_or_warm,role,outcome,provider,model,rate_tier,item,billed_units,unit,price_per_unit_usd,cost_usd,source_url,note
+a1,,SYNTHETIC-cold,cold,enrich,failed,openai,gpt-6-luna,standard,UNRESOLVED,,,,,,usage unknown
+a2,req-1,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,standard,input,2000,token,1e-07,0.0002000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a2,req-1,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,standard,cached_input,1000,token,1e-08,0.0000100000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a2,req-1,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,standard,output,2000,token,5e-07,0.0010000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a3,req-2,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,flex,input,2500,token,5e-08,0.0001250000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a3,req-2,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,flex,cached_input,0,token,5e-09,0.0000000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a3,req-2,SYNTHETIC-cold,cold,enrich,succeeded,openai,gpt-6-luna,flex,output,1500,token,2.5e-07,0.0003750000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a4,,SYNTHETIC-cold,cold,enrich,failed,openai,gpt-6-luna,standard,UNRESOLVED,,,,,,usage unknown
+a5,,SYNTHETIC-cold,cold,enrich,failed,openai,gpt-6-luna,standard,UNRESOLVED,,,,,,usage unknown
+a6,req-4,SYNTHETIC-cold,cold,verify,succeeded,openai,gpt-6-luna,decisions,input,800,token,1e-07,0.0000800000,https://developers.openai.com/api/docs/guides/decisions,
+a6,req-4,SYNTHETIC-cold,cold,verify,succeeded,openai,gpt-6-luna,decisions,cached_input,0,token,1e-07,0.0000000000,https://developers.openai.com/api/docs/guides/decisions,
+a6,req-4,SYNTHETIC-cold,cold,verify,succeeded,openai,gpt-6-luna,decisions,output,0,token,0,0.0000000000,https://developers.openai.com/api/docs/guides/decisions,
+a7,req-5,SYNTHETIC-cold,cold,group,succeeded,openai,gpt-6-luna,standard,input,5000,token,1e-07,0.0005000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a7,req-5,SYNTHETIC-cold,cold,group,succeeded,openai,gpt-6-luna,standard,cached_input,0,token,1e-08,0.0000000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a7,req-5,SYNTHETIC-cold,cold,group,succeeded,openai,gpt-6-luna,standard,output,400,token,5e-07,0.0002000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a8,req-6,SYNTHETIC-cold,cold,memo,succeeded,openai,gpt-6-luna,standard,input,2000,token,1e-07,0.0002000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a8,req-6,SYNTHETIC-cold,cold,memo,succeeded,openai,gpt-6-luna,standard,cached_input,0,token,1e-08,0.0000000000,https://developers.openai.com/api/docs/models/gpt-6-luna,
+a8,req-6,SYNTHETIC-cold,cold,memo,succeeded,openai,gpt-6-luna,standard,output,800,token,5e-07,0.0004000000,https://developers.openai.com/api/docs/models/gpt-6-luna,

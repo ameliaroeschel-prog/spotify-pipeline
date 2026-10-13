@@ -1,0 +1,16 @@
+{"run_id": "SYNTHETIC-cold", "stage": "ingest", "started": 1800000000.0, "ended": 1800000001.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "enrich", "started": 1800000001.0, "ended": 1800000039.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "verify", "started": 1800000040.0, "ended": 1800000045.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "group", "started": 1800000046.0, "ended": 1800000056.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "rank", "started": 1800000056.0, "ended": 1800000057.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "memo", "started": 1800000057.0, "ended": 1800000067.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "export", "started": 1800000067.0, "ended": 1800000070.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "cold", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "ingest", "started": 1800000100.0, "ended": 1800000101.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "enrich", "started": 1800000101.0, "ended": 1800000101.5, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "verify", "started": 1800000101.5, "ended": 1800000102.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "group", "started": 1800000102.0, "ended": 1800000102.5, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "rank", "started": 1800000102.5, "ended": 1800000103.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "memo", "started": 1800000103.0, "ended": 1800000103.5, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-warm", "stage": "export", "started": 1800000103.5, "ended": 1800000105.0, "items_in": null, "items_out": null, "notes": "synthetic", "cold_or_warm": "warm", "source": "stages table"}
+{"run_id": "SYNTHETIC-cold", "stage": "end_to_end", "started": 1800000000.0, "ended": 1800000070.0, "cold_or_warm": "cold", "source": "runs table start/end"}
+{"run_id": "SYNTHETIC-warm", "stage": "end_to_end", "started": 1800000100.0, "ended": 1800000105.0, "cold_or_warm": "warm", "source": "runs table start/end"}
