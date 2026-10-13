@@ -10,70 +10,26 @@ transaction per batch; exact-duplicate reviews then reuse the result with cache_
 
 import argparse
 import json
+import re
 import signal
-import sqlite3
 import threading
 import time
-import uuid
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 
 from pipeline import config as C
-from pipeline.ingest import connect
 from pipeline.llm import PermanentError, TransientError, call, with_retries
+from pipeline.state import Attempts, Ledger, new_run_id, open_state, price, write_calls
 
-# USD per token, standard tier (https://developers.openai.com/api/docs/models/gpt-6-luna, checked 2026-10-13).
-PRICES = {"gpt-6-luna": {"input": 0.10e-6, "cached_input": 0.01e-6, "output": 0.50e-6}}
-
-STATE_SCHEMA = """
-CREATE TABLE IF NOT EXISTS results (
-    text_sha TEXT NOT NULL, label_config TEXT NOT NULL, origin_id TEXT NOT NULL,
-    topic TEXT, intent TEXT, sentiment REAL, severity INTEGER, entities TEXT, evidence_quote TEXT,
-    needs_review INTEGER, quote_source TEXT, request_id TEXT, created REAL,
-    PRIMARY KEY (text_sha, label_config));
-CREATE TABLE IF NOT EXISTS calls (
-    attempt_id TEXT PRIMARY KEY, request_id TEXT, run_id TEXT, role TEXT, phase TEXT, model TEXT,
-    label_config TEXT, review_ids TEXT, outcome TEXT, error TEXT, attempt INTEGER,
-    input_tokens INTEGER, cached_input_tokens INTEGER, output_tokens INTEGER, reasoning_tokens INTEGER,
-    cost_usd REAL, started REAL, ended REAL);
-CREATE TABLE IF NOT EXISTS failures (
-    review_id TEXT, label_config TEXT, attempts INTEGER, reason TEXT, PRIMARY KEY (review_id, label_config));
-CREATE TABLE IF NOT EXISTS runs (
-    run_id TEXT PRIMARY KEY, phase TEXT, started REAL, ended REAL, settings TEXT, summary TEXT);
-"""
+ENTITY_RX = {term: re.compile(rx, re.I) for term, rx in C.ENTITY_TERMS.items()}
 
 
-def cost_of(model, usage):
-    p = PRICES.get(model)
-    if not p or usage.get("input_tokens") is None:
-        return None
-    cached = usage.get("cached_input_tokens") or 0
-    # Mutually exclusive categories; reasoning tokens are already inside output_tokens.
-    return (usage["input_tokens"] - cached) * p["input"] + cached * p["cached_input"] + usage["output_tokens"] * p["output"]
+def entities_for(text):
+    """Deterministic feature-term extraction (code, not model)."""
+    return [term for term, rx in ENTITY_RX.items() if rx.search(text)][:6]
 
 
-class Ledger:
-    """One spend ledger shared by all workers. Reserve worst-case cost before dispatch; stop
-    admitting work once spent + reserved + next reservation would exceed the cap."""
-
-    def __init__(self, cap, already_spent=0.0):
-        self.cap, self.spent, self.reserved = cap, already_spent, 0.0
-        self.lock = threading.Lock()
-
-    def reserve(self, amount):
-        with self.lock:
-            if self.spent + self.reserved + amount > self.cap:
-                return False
-            self.reserved += amount
-            return True
-
-    def settle(self, reserved, actual):
-        with self.lock:
-            self.reserved -= reserved
-            self.spent += actual if actual is not None else reserved   # unknown usage: assume worst case
-
-
-def worst_case_cost(model, items):
-    p = PRICES.get(model)
+def worst_case_cost(model, tier, items):
+    p = price(model, tier)
     if not p:
         return 0.0
     in_tokens = 2500 + sum(len(t) for _, t in items) // 2       # generous: ~4 chars/token, x2 margin
@@ -98,6 +54,18 @@ def find_quote(text, quote):
     return None, None
 
 
+def parse_line(line):
+    """'i|topic|intent|sev|sent|flag|quote' -> dict, or None. Quote is last so it may contain '|'."""
+    parts = line.strip().split("|", 6)
+    if len(parts) < 6:
+        return None
+    try:
+        return {"i": int(parts[0]), "t": parts[1].strip(), "n": parts[2].strip(), "v": int(parts[3]),
+                "s": int(parts[4]), "f": parts[5].strip() == "1", "q": parts[6] if len(parts) > 6 else ""}
+    except ValueError:
+        return None
+
+
 def parse_and_validate(result, batch):
     """Returns ({review_id: label_dict}, {review_id: problem}). Never trusts model IDs blindly."""
     by_index = {i: (rid, text) for i, (rid, text) in enumerate(batch, 1)}
@@ -105,26 +73,25 @@ def parse_and_validate(result, batch):
     if result["status"] != "completed":
         return good, {rid: f"incomplete_response:{result['incomplete_reason']}" for rid, _ in batch}
     try:
-        items = json.loads(result["text"])["r"]
+        lines = json.loads(result["text"])["r"]
     except (ValueError, KeyError, TypeError):
         return good, {rid: "unparseable_output" for rid, _ in batch}
     seen = set()
-    for it in items:
-        i = it.get("i")
-        if i not in by_index or i in seen:
-            continue                                   # foreign or duplicated index: ignore
-        seen.add(i)
-        rid, text = by_index[i]
-        quote, source = find_quote(text, it.get("q", ""))
-        if (it.get("t") not in C.TOPICS or it.get("n") not in C.INTENTS or it.get("v") not in (1, 2, 3, 4, 5)
-                or it.get("s") not in (-2, -1, 0, 1, 2)):
+    for line in lines:
+        it = parse_line(line) if isinstance(line, str) else None
+        if not it or it["i"] not in by_index or it["i"] in seen:
+            continue                                   # malformed, foreign or duplicated index: ignore
+        seen.add(it["i"])
+        rid, text = by_index[it["i"]]
+        quote, source = find_quote(text, it["q"])
+        if it["t"] not in C.TOPICS or it["n"] not in C.INTENTS or it["v"] not in (1, 2, 3, 4, 5) \
+                or it["s"] not in (-2, -1, 0, 1, 2):
             bad[rid] = "invalid_label_values"
         elif quote is None:
             bad[rid] = "quote_not_in_source"
         else:
-            entities = [e.strip().lower() for e in it.get("e", []) if isinstance(e, str) and e.strip()][:5]
             good[rid] = {"topic": it["t"], "intent": it["n"], "severity": it["v"], "sentiment": it["s"] / 2,
-                         "entities": entities, "evidence_quote": quote, "needs_review": bool(it.get("f")),
+                         "entities": entities_for(text), "evidence_quote": quote, "needs_review": it["f"],
                          "quote_source": source}
     for i, (rid, _) in by_index.items():
         if i not in seen:
@@ -133,24 +100,24 @@ def parse_and_validate(result, batch):
 
 
 class Enricher:
-    def __init__(self, db_path, provider, workers, budget, label_config, model, stop_after_batches=None):
-        self.db_path, self.provider, self.workers = db_path, provider, workers
-        self.model, self.label_config = model, label_config
-        self.stop_after_batches = stop_after_batches
-        self.con = connect(db_path)
-        self.con.executescript(STATE_SCHEMA)
-        prior = self.con.execute("SELECT COALESCE(SUM(cost_usd),0) FROM calls").fetchone()[0]
-        self.ledger = Ledger(budget, prior)
-        done_before = self.con.execute("SELECT COUNT(*) FROM results WHERE label_config=?", (label_config,)).fetchone()[0]
+    def __init__(self, db_path, provider, workers, budget, label_config, model, tier,
+                 stop_after_batches=None, run_id=None):
+        self.provider, self.workers, self.model, self.tier = provider, workers, model, tier
+        self.label_config, self.stop_after_batches = label_config, stop_after_batches
+        self.con = open_state(db_path)
+        other = self.con.execute("SELECT DISTINCT label_config FROM results WHERE label_config<>?",
+                                 (label_config,)).fetchall()
+        if other:
+            raise SystemExit(f"{db_path} holds results from another label_config {other}; use a fresh run dir.")
+        self.ledger = Ledger(self.con, budget)
+        done_before = self.con.execute("SELECT COUNT(*) FROM results").fetchone()[0]
         self.phase = "resume" if done_before else "initial"
-        self.run_id = time.strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:6]
+        self.run_id = run_id or new_run_id()
         self.stop = threading.Event()
-        self.log_lock = threading.Lock()
-        self.pending_logs = []
 
     # ---- queue ---------------------------------------------------------------
     def apply_cache(self):
-        """Exact-text reuse: completed result under the same label_config -> mark all its reviews."""
+        """Exact-text reuse: a completed result under the same label_config marks all its reviews."""
         cur = self.con.execute("""
             UPDATE reviews SET status='completed' WHERE status='pending' AND text_sha IN
               (SELECT text_sha FROM results WHERE label_config=?)""", (self.label_config,))
@@ -169,21 +136,13 @@ class Enricher:
     # ---- one request (runs in a worker thread; no DB writes here) -------------
     def request(self, batch):
         items = [(i, text) for i, (_, text) in enumerate(batch, 1)]
-        attempts = []
-
-        def log_attempt(n, outcome, result, error, started):
-            usage = (result or {}).get("usage") or {}
-            attempts.append({"attempt_id": uuid.uuid4().hex, "request_id": (result or {}).get("request_id"),
-                             "outcome": outcome, "error": error, "attempt": n, "usage": usage,
-                             "cost": cost_of(self.model, usage) if result else 0.0,
-                             "started": started, "ended": time.time()})
-
+        attempts = Attempts(self.model, self.tier)
         fn = lambda: call(self.provider, model=self.model, effort=C.EFFORT, instructions=C.ENRICH_INSTRUCTIONS,
                           user=C.enrich_user_message(items), schema=C.ENRICH_SCHEMA, schema_name="enrich",
-                          max_output_tokens=len(items) * C.OUT_TOKENS_PER_REVIEW, cache_key=C.ENRICH_PROMPT_VERSION)
+                          max_output_tokens=len(items) * C.OUT_TOKENS_PER_REVIEW,
+                          cache_key=C.ENRICH_PROMPT_VERSION, service_tier=self.tier)
         try:
-            result = with_retries(fn, log_attempt)
-            return batch, result, attempts, None
+            return batch, with_retries(fn, attempts), attempts, None
         except (TransientError, PermanentError) as e:
             return batch, None, attempts, str(e)
 
@@ -192,20 +151,14 @@ class Enricher:
         review_ids = [rid for rid, _ in batch]
         good, bad = parse_and_validate(result, batch) if result else ({}, {rid: f"api_error:{error}" for rid in review_ids})
         with self.con:   # atomic: either the whole batch's results + logs land, or none do
-            for a in attempts:
-                u = a["usage"]
-                self.con.execute("INSERT INTO calls VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
-                    a["attempt_id"], a["request_id"], self.run_id, "enrich", self.phase, self.model, self.label_config,
-                    json.dumps(review_ids), a["outcome"], a["error"], a["attempt"], u.get("input_tokens"),
-                    u.get("cached_input_tokens"), u.get("output_tokens"), u.get("reasoning_tokens"), a["cost"],
-                    a["started"], a["ended"]))
+            write_calls(self.con, attempts, self.run_id, "enrich", self.phase, self.label_config, review_ids)
             text_sha = dict(self.con.execute(
                 f"SELECT review_id, text_sha FROM reviews WHERE review_id IN ({','.join('?' * len(review_ids))})", review_ids))
             for rid, lab in good.items():
                 self.con.execute("INSERT OR IGNORE INTO results VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
                     text_sha[rid], self.label_config, rid, lab["topic"], lab["intent"], lab["sentiment"], lab["severity"],
                     json.dumps(lab["entities"]), lab["evidence_quote"], int(lab["needs_review"]), lab["quote_source"],
-                    attempts[-1]["request_id"], time.time()))
+                    attempts.items[-1]["request_id"], time.time()))
                 self.con.execute("UPDATE reviews SET status='completed' WHERE text_sha=? AND status='pending'", (text_sha[rid],))
             if retry_round:   # second failure: quarantine with reason and attempt count
                 for rid, why in bad.items():
@@ -220,19 +173,19 @@ class Enricher:
         cache_hits = self.apply_cache()
         batches = self.pending_batches(limit_texts)
         stats = {"batches_done": 0, "completed_texts": 0, "invalid_first_pass": 0, "quarantined": 0,
-                 "stopped_reason": None, "cache_hits_reviews": cache_hits}
-        retry_queue = []      # (batch, ) of items that failed validation once: retried ONCE in smaller requests
+                 "stopped_reason": None, "cache_hits_reviews": cache_hits, "requests_planned": len(batches)}
+        total_batches = len(batches)
+        retry_queue = []      # items that failed validation once: retried ONCE in smaller requests
 
         def submit_next(pool, inflight, queue, retry_round):
             while queue and len(inflight) < self.workers and not self.stop.is_set():
-                batch = queue[0]
-                reserve = worst_case_cost(self.model, batch)
+                reserve = worst_case_cost(self.model, self.tier, queue[0])
                 if not self.ledger.reserve(reserve):
                     stats["stopped_reason"] = "budget_cap"
                     self.stop.set()
                     return
-                queue.pop(0)
-                inflight[pool.submit(self.request, batch)] = (batch, reserve, retry_round)
+                batch = queue.pop(0)
+                inflight[pool.submit(self.request, batch)] = (reserve, retry_round)
 
         def drain(queue, retry_round):
             inflight = {}
@@ -241,9 +194,9 @@ class Enricher:
                 while inflight:
                     done, _ = wait(inflight, return_when=FIRST_COMPLETED)
                     for fut in done:
-                        batch, reserve, rr = inflight.pop(fut)
+                        reserve, rr = inflight.pop(fut)
                         batch, result, attempts, error = fut.result()
-                        self.ledger.settle(reserve, sum(a["cost"] or 0 for a in attempts) if result or attempts else 0)
+                        self.ledger.settle(reserve, attempts.total_cost())
                         good, bad = self.commit(batch, result, attempts, error, rr)
                         stats["completed_texts"] += len(good)
                         if rr:
@@ -253,14 +206,18 @@ class Enricher:
                             bad_items = [(rid, t) for rid, t in batch if rid in bad]
                             retry_queue.extend(bad_items[i:i + 10] for i in range(0, len(bad_items), 10))
                         stats["batches_done"] += 1
-                        print(f"[{self.phase}] batch {stats['batches_done']}: +{len(good)} ok, {len(bad)} bad, "
-                              f"spent ${self.ledger.spent:.4f}", flush=True)
+                        if stats["batches_done"] % 10 == 0 or total_batches <= 20:
+                            print(f"[{self.phase}] batch {stats['batches_done']}/{total_batches}: +{len(good)} ok, "
+                                  f"{len(bad)} bad, spent ${self.ledger.spent:.4f}", flush=True)
                         if self.stop_after_batches and stats["batches_done"] >= self.stop_after_batches:
                             stats["stopped_reason"] = stats["stopped_reason"] or "stop_after_batches (interruption demo)"
                             self.stop.set()
                     submit_next(pool, inflight, queue, retry_round)
 
-        prev = signal.signal(signal.SIGINT, lambda *_: (self.stop.set(), stats.update(stopped_reason="interrupted (Ctrl-C)")))
+        def on_sigint(*_):
+            self.stop.set()
+            stats["stopped_reason"] = "interrupted (Ctrl-C): in-flight batches finish and are saved"
+        prev = signal.signal(signal.SIGINT, on_sigint)
         try:
             drain(batches, retry_round=False)
             if not self.stop.is_set():
@@ -271,15 +228,20 @@ class Enricher:
 
         counts = dict(self.con.execute("SELECT status, COUNT(*) FROM reviews GROUP BY status").fetchall())
         summary = {**stats, "run_id": self.run_id, "phase": self.phase, "label_config": self.label_config,
-                   "provider": self.provider, "workers": self.workers, "budget_usd": self.ledger.cap,
-                   "spent_usd_total": round(self.ledger.spent, 6), "wall_seconds": round(time.time() - started, 2),
-                   "review_status_counts": counts}
+                   "provider": self.provider, "service_tier": self.tier, "workers": self.workers,
+                   "budget_usd": self.ledger.cap, "spent_usd_total": round(self.ledger.spent, 6),
+                   "wall_seconds": round(time.time() - started, 2), "review_status_counts": counts}
         with self.con:
-            self.con.execute("INSERT INTO runs VALUES (?,?,?,?,?,?)", (
+            self.con.execute("INSERT OR REPLACE INTO runs VALUES (?,?,?,?,?,?)", (
                 self.run_id, self.phase, started, time.time(),
                 json.dumps({"model": self.model, "effort": C.EFFORT, "batch_size": C.BATCH_SIZE, "workers": self.workers,
-                            "budget": self.ledger.cap, "limit_texts": limit_texts}), json.dumps(summary)))
+                            "service_tier": self.tier, "budget": self.ledger.cap, "limit_texts": limit_texts}),
+                json.dumps(summary)))
         return summary
+
+
+def label_config_for(provider):
+    return C.LABEL_CONFIG if provider == "openai" else f"mock+{C.ENRICH_PROMPT_VERSION}+{C.SCHEMA_VERSION}"
 
 
 def main():
@@ -287,15 +249,15 @@ def main():
     ap.add_argument("--db", required=True)
     ap.add_argument("--provider", choices=["openai", "mock"], default="mock")
     ap.add_argument("--workers", type=int, default=1)
+    ap.add_argument("--service-tier", choices=["standard", "flex"], default=C.DEFAULT_SERVICE_TIER)
     ap.add_argument("--budget", type=float, required=True, help="hard USD cap across all runs on this db")
     ap.add_argument("--limit-texts", type=int, help="process at most N distinct texts this run")
     ap.add_argument("--stop-after-batches", type=int, help="simulate an interruption after N committed batches")
     args = ap.parse_args()
     C.load_env()
     model = C.MODEL if args.provider == "openai" else "mock-keyword-v1"
-    label_config = C.LABEL_CONFIG if args.provider == "openai" else f"mock+{C.ENRICH_PROMPT_VERSION}+{C.SCHEMA_VERSION}"
-    summary = Enricher(args.db, args.provider, args.workers, args.budget, label_config, model,
-                       args.stop_after_batches).run(args.limit_texts)
+    summary = Enricher(args.db, args.provider, args.workers, args.budget, label_config_for(args.provider), model,
+                       args.service_tier, args.stop_after_batches).run(args.limit_texts)
     print(json.dumps(summary, indent=2))
 
 
