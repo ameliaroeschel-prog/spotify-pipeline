@@ -24,7 +24,7 @@ function renderKpis(s) {
     : p.wall_seconds < 7200 ? ` · ${Math.round(p.wall_seconds / 60)} min wall time` : ` · ${(p.wall_seconds / 3600).toFixed(1)} h wall time`;
   const kpis = [
     ['Reviews ingested', fmtInt(c.source_rows), 'every source review ID accounted for'],
-    ['Classified', fmtInt(c.completed), `${fmtPct(c.completed / c.source_rows, 2)} of ingested`],
+    ['Classified', fmtInt(c.completed), `${fmtPct(c.completed / c.source_rows, 3)} of ingested (${fmtInt(c.source_rows - c.completed)} not classified)`],
     ['Quarantined', fmtInt(c.quarantined), reasons || 'none'],
     ['Complaint share', fmtPct(c.complaint_share), `${fmtInt(c.complaints)} of ${fmtInt(c.completed)} classified (${fmtPct(c.cancellation_share)} threaten to cancel)`],
     ['Model cost', cost, `full run${mins}`],
@@ -64,8 +64,8 @@ function inline(s) {
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 function linkify(html, citedIds) {
-  // [C1] or [C1, C2] -> clickable claim chips showing the value
-  html = html.replace(/\[((?:C\d+)(?:\s*,\s*C\d+)*)\]/g, (m, list) =>
+  // [C1], [A2s], [R1p], [T1a] or lists of them -> clickable chips showing the cited value
+  html = html.replace(/\[((?:[CART]\d+[a-z]?)(?:\s*,\s*[CART]\d+[a-z]?)*)\]/g, (m, list) =>
     list.split(/\s*,\s*/).map(claimChip).join(' '));
   // review IDs (anything the memo cites, plus any UUID-shaped token)
   const ids = (citedIds || []).map((id) => esc(id).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));

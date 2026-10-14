@@ -121,6 +121,9 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
         w = csv.DictWriter(f, fieldnames=["claim_id", "issue_id", "metric", "value"])
         w.writeheader()
         w.writerows(claims)
+        # Dashboard only: the memo's other code-computed citations ([A#], [R#], [T#]). The grading claims.csv
+        # keeps just the four checker-supported issue metrics.
+        w.writerows(extra_citations(pack))
     if memo:
         memo = {**memo, "priority_issue_id": memo.get("priority_issue_id"), "model": "gpt-6-luna",
                 "generated_at": con.execute("SELECT MAX(created) FROM memo").fetchone()[0]}
@@ -169,6 +172,36 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
                 f.write(json.dumps({"review_id": rid, "review_text": row[0], "review_rating": row[1],
                                     "review_month": row[2][:7], "evidence_quote": row[3], "topic": row[4],
                                     "intent": row[5], "severity": row[6], "issue_id": row[7]}, ensure_ascii=False) + "\n")
+
+
+def extra_citations(pack):
+    rows = []
+    for area, v in (pack.get("area_totals") or {}).items():
+        rows.append({"claim_id": v["cite_complaints_as"], "issue_id": "", "metric": f"area complaint reviews ({area})",
+                     "value": str(v["complaints"])})
+        rows.append({"claim_id": v["cite_severity_sum_as"], "issue_id": "", "metric": f"area severity_sum ({area})",
+                     "value": str(v["severity_sum"])})
+    rq, cp = pack.get("recent_quarter"), pack.get("comparable_periods")
+    if rq:
+        p = rq["period"]
+        for key, label in (("complaints_total", "complaint memberships"), ("complaint_share_of_all_reviews_pct",
+                           "complaint share of all reviews %"), ("cancellation_intent_reviews", "cancellation-intent reviews")):
+            rows.append({"claim_id": rq[key]["cite_as"], "issue_id": "", "metric": f"{label}, {p}", "value": rq[key]["value"]})
+        for t in rq["top_issues"]:
+            rows.append({"claim_id": t["complaints"]["cite_as"], "issue_id": t["issue_id"], "metric": f"complaints, {p}",
+                         "value": t["complaints"]["value"]})
+            rows.append({"claim_id": t["share_of_recent_complaints_pct"]["cite_as"], "issue_id": t["issue_id"],
+                         "metric": f"share of complaints %, {p}", "value": t["share_of_recent_complaints_pct"]["value"]})
+    if cp:
+        for y in ("2022", "2023"):
+            c = cp["complaint_share_of_all_reviews_pct"][y]
+            rows.append({"claim_id": c["cite_as"], "issue_id": "", "metric": f"complaint share of all reviews %, {cp['periods'][y]}",
+                         "value": c["value"]})
+        for t in cp["issue_share_of_complaints_pct"]:
+            for y in ("2022", "2023"):
+                rows.append({"claim_id": t[y]["cite_as"], "issue_id": t["issue_id"],
+                             "metric": f"share of complaints %, {cp['periods'][y]}", "value": t[y]["value"]})
+    return rows
 
 
 def render_memo(con, path):
