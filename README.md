@@ -3,7 +3,14 @@
 **Question:** at the end of the review window (May 2022 to November 2023), where should Spotify put
 next quarter's product effort: access, usability, playback, or billing/support?
 
-**Answer, with traceable evidence:** see [memo.md](memo.md) and the live dashboard.
+**Answer:** prioritize **billing, specifically the design of the free tier's "fence"**: the restrictions,
+ads and upsell pressure that separate free from Premium. The data says to **redesign the fence, not remove
+it**. Free-tier restrictions (can't pick songs, forced shuffle, skip caps) are the #1 specific issue in the
+last full quarter (23.9% of complaints), and their share doubled year over year, while ad complaints, which
+lead the 18-month total, shrank as a share. Support is negligible (about 0.2% of complaints); "billing/support"
+is just the brief's label for the area. The reviews can show backlash but not conversion or revenue, so the
+memo recommends pairing this with Spotify's internal upgrade data before committing. Full argument, with every
+number traceable: [memo.md](memo.md) and the live dashboard. Source: Google Play (Android app) reviews.
 
 This repo is a multi-agent pipeline that reads all **660,622** Google Play reviews and labels every
 nonempty review against a fixed taxonomy. Separate model roles check each other. Code counts, groups and
@@ -205,7 +212,7 @@ Review `e7747485-42c5-4bb9-b1e2-1b4044eedb5a` (1 star, 2023-10-14):
 - **Trends** ([analysis/](analysis/)): monthly complaint share with denominators, plus issue shares in comparable periods (Jun–Oct 2022 vs. Jun–Oct 2023). The partial months (2022-05 and 2023-11) are excluded. Complaint share of all reviews rose from **30.6%** (Jun–Oct 2022) to **59.0%** (Jun–Oct 2023), and reached **75.2% in Oct 2023**, a month with 10,751 cancellation-intent reviews. In the last full quarter (Aug–Oct 2023), **free-tier restrictions are 23.9% of complaints**, the largest specific issue. Their share doubled year over year (8.4% → 16.8%), while **ads fell** from 20.3% to 8.8% and crashes from 6.2% to 1.1%. The 18-month baseline ranking (where ads lead usability) and the recent view therefore point to different priorities. The memo weighs both and explains its choice ([recent_quarter.json](analysis/recent_quarter.json), [issue_share_comparable_periods.csv](analysis/issue_share_comparable_periods.csv), [monthly_complaint_share.csv](analysis/monthly_complaint_share.csv)).
 
 ## Limitations
-- These are self-selected, public Google Play reviews (Android only), not a representative user sample. Volume spikes in July and October 2023 overweight those months.
+- These are self-selected, public **Google Play Store** reviews of Spotify's **Android** app (the Kaggle dataset is "3.4 Million Spotify Google Store Reviews"), not iOS, desktop or web users, and not a representative user sample. Volume spikes in July and October 2023 overweight those months.
 - Cancellation language is stated intent, not observed churn. The data has no revenue, plan tier or retention fields, so no revenue or churn impact is claimed.
 - Labels are model predictions: about 80–90% agreement with my labels and with the verifier. Fifty golden cases are a small diagnostic, not a precise accuracy estimate.
 - Non-English and code-mixed reviews are classified, but reading them is harder. The `needs_review` flag marks uncertain ones.

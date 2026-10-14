@@ -31,3 +31,51 @@ C29,other.bad_update_generic,complaint_count,14108
 C30,other.bad_update_generic,severity_sum,28127
 C31,other.bad_update_generic,mean_severity,1.993692
 C32,other.bad_update_generic,priority_score,28127
+A1c,,area complaint reviews (access),9666
+A1s,,area severity_sum (access),37494
+A2c,,area complaint reviews (usability),79177
+A2s,,area severity_sum (usability),197874
+A3c,,area complaint reviews (playback),43381
+A3s,,area severity_sum (playback),145242
+A4c,,area complaint reviews (billing_support),61298
+A4s,,area severity_sum (billing_support),171603
+B3,,"complaint reviews, topic playback (part of playback)",37480
+B4,,"complaint reviews, topic downloads (part of playback)",5901
+B6,,"complaint reviews, topic billing (part of billing_support)",60705
+B7,,"complaint reviews, topic support (part of billing_support)",593
+R0c,,"complaint memberships, 2023-08..2023-10",101420
+R0p,,"complaint share of all reviews %, 2023-08..2023-10",62.9
+R0k,,"cancellation-intent reviews, 2023-08..2023-10",14101
+R1c,billing.free_tier_limits,"complaints, 2023-08..2023-10",24198
+R1p,billing.free_tier_limits,"share of complaints %, 2023-08..2023-10",23.9
+R2c,other.general,"complaints, 2023-08..2023-10",17572
+R2p,other.general,"share of complaints %, 2023-08..2023-10",17.3
+R3c,other.bad_update_generic,"complaints, 2023-08..2023-10",9946
+R3p,other.bad_update_generic,"share of complaints %, 2023-08..2023-10",9.8
+R4c,usability.ads,"complaints, 2023-08..2023-10",9179
+R4p,usability.ads,"share of complaints %, 2023-08..2023-10",9.1
+R5c,billing.premium_pressure,"complaints, 2023-08..2023-10",6626
+R5p,billing.premium_pressure,"share of complaints %, 2023-08..2023-10",6.5
+R6c,usability.controls_navigation,"complaints, 2023-08..2023-10",4031
+R6p,usability.controls_navigation,"share of complaints %, 2023-08..2023-10",4.0
+T0a,,"complaint share of all reviews %, 2022-06..2022-10",30.6
+T0b,,"complaint share of all reviews %, 2023-06..2023-10",59.0
+T1a,usability.ads,"share of complaints %, 2022-06..2022-10",20.3
+T1b,usability.ads,"share of complaints %, 2023-06..2023-10",8.8
+T2a,billing.free_tier_limits,"share of complaints %, 2022-06..2022-10",8.4
+T2b,billing.free_tier_limits,"share of complaints %, 2023-06..2023-10",16.8
+T3a,billing.premium_pressure,"share of complaints %, 2022-06..2022-10",0.8
+T3b,billing.premium_pressure,"share of complaints %, 2023-06..2023-10",4.4
+T4a,other.general,"share of complaints %, 2022-06..2022-10",8.1
+T4b,other.general,"share of complaints %, 2023-06..2023-10",33.4
+T5a,other.bad_update_generic,"share of complaints %, 2022-06..2022-10",0.8
+T5b,other.bad_update_generic,"share of complaints %, 2023-06..2023-10",6.4
+T6a,playback.crashes_wont_open,"share of complaints %, 2022-06..2022-10",6.2
+T6b,playback.crashes_wont_open,"share of complaints %, 2023-06..2023-10",1.1
+F0c,,free-tier levers: full window complaints,88806
+F0p,,free-tier levers: full window share of complaints pct,29.8
+F0k,,free-tier levers: full window cancellation intent,10693
+F1c,,free-tier levers: recent quarter complaints,40003
+F1p,,free-tier levers: recent quarter share of complaints pct,39.4
+F2a,,free-tier levers: share 2022 pct,29.6
+F2b,,free-tier levers: share 2023 pct,30.0

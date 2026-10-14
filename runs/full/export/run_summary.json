@@ -26,14 +26,14 @@
     "severity_exact": 0.855,
     "severity_mae": 0.163
   },
-  "cost_usd": 3.758554,
+  "cost_usd": 3.76294,
   "cost_by_role_usd": {
     "enrich": 3.348257,
     "group": 0.003181,
-    "memo": 0.003229,
+    "memo": 0.007614,
     "verify": 0.403888
   },
-  "wall_seconds": 11428.0,
+  "wall_seconds": 11532.2,
   "model": "gpt-6-luna",
   "label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3"
 }

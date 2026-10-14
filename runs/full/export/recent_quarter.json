@@ -166,5 +166,36 @@
         }
       }
     ]
+  },
+  "free_tier_levers": {
+    "definition": "complaint/cancellation reviews in issues usability.ads, billing.free_tier_limits, billing.premium_pressure (free-tier monetization design: ads, feature restrictions, upsell pressure)",
+    "full_window_complaints": {
+      "value": "88806",
+      "cite_as": "F0c"
+    },
+    "full_window_share_of_complaints_pct": {
+      "value": "29.8",
+      "cite_as": "F0p"
+    },
+    "full_window_cancellation_intent": {
+      "value": "10693",
+      "cite_as": "F0k"
+    },
+    "recent_quarter_complaints": {
+      "value": "40003",
+      "cite_as": "F1c"
+    },
+    "recent_quarter_share_of_complaints_pct": {
+      "value": "39.4",
+      "cite_as": "F1p"
+    },
+    "share_2022_pct": {
+      "value": "29.6",
+      "cite_as": "F2a"
+    },
+    "share_2023_pct": {
+      "value": "30.0",
+      "cite_as": "F2b"
+    }
   }
 }

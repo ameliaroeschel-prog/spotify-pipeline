@@ -65,7 +65,7 @@ function inline(s) {
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 function linkify(html, citedIds) {
   // [C1], [A2s], [R1p], [T1a] or lists of them -> clickable chips showing the cited value
-  html = html.replace(/\[((?:[CART]\d+[a-z]?)(?:\s*,\s*[CART]\d+[a-z]?)*)\]/g, (m, list) =>
+  html = html.replace(/\[((?:[CARTFB]\d+[a-z]?)(?:\s*,\s*[CARTFB]\d+[a-z]?)*)\]/g, (m, list) =>
     list.split(/\s*,\s*/).map(claimChip).join(' '));
   // review IDs (anything the memo cites, plus any UUID-shaped token)
   const ids = (citedIds || []).map((id) => esc(id).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));

@@ -2,25 +2,36 @@
 
 *Source: 660,622 Google Play reviews (May 2022 – Nov 2023); 660,603 classified, 19 quarantined, 0 unprocessed. Written by the memo-writer role (gpt-6-luna) from saved aggregates only; every number and ID below was checked by code (validation: passed).*
 
-**Recommendation: billing/support — lead issue `billing.free_tier_limits` (Free Tier Playback Restrictions)**
+**Recommendation: billing (pricing and free-tier design; the brief's billing/support area) — lead issue `billing.free_tier_limits` (Free Tier Playback Restrictions)**
 
-**Prioritize billing/support, led by Free Tier Playback Restrictions.** This is not the full-window severity leader: usability ranks first with a severity sum of 197874 [A2s], while billing/support ranks second with 171603 [A4s]. But the lead issue is the largest specific actionable signal in both the full-window claims and the recent quarter: 41518 complaints [C5] overall and 24198 complaints [R1c], representing 23.9% of recent complaints [R1p]. Its share of complaints increased from 8.4% [T2a] in the earlier comparable period to 16.8% [T2b] in the later one. The quotes describe restrictions on shuffle and other playback controls (e7747485-42c5-4bb9-b1e2-1b4044eedb5a; 9b42b7f8-2477-4516-b2de-6d46831fbad9). Addressing those limits is not purely a product-quality fix: it requires a pricing/business-model decision about what free listeners can do.
+**Bottom line:** Prioritize billing: pricing and free-tier design, led by Free Tier Playback Restrictions; next quarter’s work should redesign the free-tier fence rather than remove it.
 
-The complaint surge is broad: complaint share of all reviews rose from 30.6% [T0a] to 59.0% [T0b] in the comparable periods. General dissatisfaction and generic update complaints grew sharply, to 33.4% [T4b] and 6.4% [T5b] of complaints, respectively; neither identifies a specific fix, so do not make them the lead. Free-tier restrictions and premium pressure also grew, while ads fell from 20.3% [T1a] to 8.8% [T1b]. Usability remains the strongest full-window alternative, with 79177 complaint reviews [A2c], including 37359 ads complaints [C9], but ads are a shrinking share. Playback is another alternative: 43381 complaint reviews [A3c], and crashes fell from 6.2% [T6a] to 1.1% [T6b].
+**What to do next quarter:**
+- Test clearer explanations of which playback controls are available on each plan, at the point users encounter a restriction.
+- Prototype less disruptive free-tier playback rules and compare them with the current experience, including how shuffle and song choice are presented.
+- Review upgrade prompts alongside these flows so restrictions and their alternatives are understandable rather than surprising.
 
-Treat public reviews as self-selected evidence; cancellation language is stated intent, not observed churn. Recent cancellation-intent reviews total 14101 [R0k]. The late-period deterioration is not proof of causality, and broad dissatisfaction/update feedback limits diagnosis.
+**Why the data points here:**
+- The full-window billing: pricing and free-tier design area has 61,298 complaint reviews [A4c] and a severity sum of 171,603 [A4s], ranking second behind usability’s severity sum of 197,874 [A2s]. Support accounts for 593 complaints [B7], while billing accounts for 60,705 [B6]; this is principally a pricing and free-tier issue, not a support workload.
+- Free Tier Playback Restrictions drew 41,518 full-window complaints [C5]. In the recent quarter, it drew 24,198 complaints [R1c], representing 23.9% of recent complaints [R1p]. Its share of complaints rose between the comparable earlier and later windows, from 8.4% [T2a] to 16.8% [T2b].
+- The broader free-tier levers set—ads, restrictions, and premium pressure—accounts for 88,806 full-window complaints [F0c] and 29.8% of complaints [F0p], versus 40,003 recent complaints [F1c] and 39.4% of recent complaints [F1p]. Premium-pressure share also rose from 0.8% [T3a] to 4.4% [T3b]. That is the clearest product-facing signal in the late-window mix.
+- The surge is not solely free-tier backlash: overall complaint share rose from 30.6% [T0a] to 59.0% [T0b], while general dissatisfaction rose from 8.1% [T4a] to 33.4% [T4b] and generic update disappointment from 0.8% [T5a] to 6.4% [T5b]. Ads are a countertrend, falling from 20.3% [T1a] to 8.8% [T1b].
+
+**The obvious pushback:** Free-tier friction is often deliberate versioning—a fence that nudges upgrades. The goal is a better-designed fence, not removing it. Reviews show backlash, including “wouldnt even let us shuffle” (review e7747485-42c5-4bb9-b1e2-1b4044eedb5a), but cannot establish conversion, revenue, or actual churn. Cancellation language is stated intent, not observed churn.
+
+**What to pair this with:** Before committing, add internal experiment results and plan-level evidence on upgrade conversion, revenue, exposure to restrictions, and actual cancellations. Public reviews are self-selected feedback, and the recent-quarter increase in complaint share does not establish its cause.
 
 ## Alternatives considered
 
-- **`usability.ads`** (Too Many Ads): Usability ranks first by full-window severity, but ads' comparable-period share fell from 20.3% [T1a] to 8.8% [T1b], while free-tier restrictions grew.
-- **`playback.stops_pauses`** (Music Stops or Pauses Unexpectedly): Playback has fewer full-window complaint reviews than usability or billing/support, and the supplied recency comparison shows crashes shrinking; it does not establish a current rise in stops or pauses.
+- **`usability.ads`** (Too Many Ads): Usability ranks first by full-window severity, with 197,874 [A2s], but the ads issue’s share of complaints declined between comparable windows, from 20.3% [T1a] to 8.8% [T1b].
+- **`other.general`** (General App Dissatisfaction): General dissatisfaction is prominent and rose from 8.1% [T4a] to 33.4% [T4b], but it identifies no supported specific product topic and is not an actionable fix.
+- **`playback.stops_pauses`** (Music Stops or Pauses Unexpectedly): Playback stops or pauses are a specific product issue, but playback is third by area severity, at 145,242 [A3s], and the supplied recency evidence does not establish a comparable increase.
 
 ## Limitations
 
-- Reviews are self-selected public feedback and may not represent all listeners.
-- Cancellation language is stated intent, not observed churn.
-- The recent-period aggregate identifies trends but does not establish their causes; generic dissatisfaction and update complaints do not specify a consistent product problem.
-- Free-tier restrictions require a pricing/business-model decision, not solely product implementation.
+- Historical Google Play reviews are self-selected public feedback, not a representative sample.
+- Cancellation language records stated intent, not observed churn; the supplied data cannot show conversion, revenue, or causal effects.
+- The late-window complaint-share surge and issue mix do not establish why individual users complained.
 
 ## Area totals cited as [A#c] / [A#s] (code-computed, `analysis/aggregates.csv`)
 
@@ -30,6 +41,8 @@ Treat public reviews as self-selected evidence; cancellation language is stated 
 | usability | usability | 79,177 [A2c] | 197,874 [A2s] |
 | playback | playback, downloads | 43,381 [A3c] | 145,242 [A3s] |
 | billing_support | billing, support | 61,298 [A4c] | 171,603 [A4s] |
+
+Pooled areas split by topic: playback 37,480 [B3]; downloads 5,901 [B4]; billing 60,705 [B6]; support 593 [B7]
 
 ## Recent quarter 2023-08..2023-10 cited as [R#] (code-computed, `analysis/recent_quarter.json`)
 
@@ -55,6 +68,20 @@ Treat public reviews as self-selected evidence; cancellation language is stated 
 | `other.general` share of complaints | 8.1% [T4a] | 33.4% [T4b] |
 | `other.bad_update_generic` share of complaints | 0.8% [T5a] | 6.4% [T5b] |
 | `playback.crashes_wont_open` share of complaints | 6.2% [T6a] | 1.1% [T6b] |
+
+## Free-tier monetization levers cited as [F#] (code-computed grouping, not the baseline ranking)
+
+*complaint/cancellation reviews in issues usability.ads, billing.free_tier_limits, billing.premium_pressure (free-tier monetization design: ads, feature restrictions, upsell pressure)*
+
+| Measure | Value |
+|---|---|
+| Complaints, full window | 88806 [F0c] |
+| Share of all complaints, full window (%) | 29.8 [F0p] |
+| Cancellation-intent reviews, full window | 10693 [F0k] |
+| Complaints, recent quarter | 40003 [F1c] |
+| Share of complaints, recent quarter (%) | 39.4 [F1p] |
+| Share of complaints, Jun-Oct 2022 (%) | 29.6 [F2a] |
+| Share of complaints, Jun-Oct 2023 (%) | 30.0 [F2b] |
 
 ## Issue claims cited as [C#] (`grading/claims.csv`, recomputed by the checker)
 
@@ -96,6 +123,5 @@ Treat public reviews as self-selected evidence; cancellation language is stated 
 ## Evidence quotes cited
 
 - `e7747485-42c5-4bb9-b1e2-1b4044eedb5a` (billing.free_tier_limits, severity 3): "wouldnt even let us shuffle"
-- `9b42b7f8-2477-4516-b2de-6d46831fbad9` (billing.free_tier_limits, severity 3): "limiting it to premium users"
 
 *Reviews are self-selected public feedback. Cancellation language is stated intent, not observed churn. No revenue, plan tier or retention data exists in this dataset, so no revenue or churn impact is claimed.*

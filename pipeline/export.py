@@ -136,7 +136,7 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
             w.writerow([v.get("cite_complaints_as"), "complaint_count", area, ";".join(v["topics"]), v["complaints"]])
             w.writerow([v.get("cite_severity_sum_as"), "severity_sum", area, ";".join(v["topics"]), v["severity_sum"]])
     (out / "recent_quarter.json").write_text(json.dumps({"recent_quarter": pack.get("recent_quarter"),
-        "comparable_periods": pack.get("comparable_periods")}, indent=2) + "\n", encoding="utf-8")
+        "comparable_periods": pack.get("comparable_periods"), "free_tier_levers": pack.get("free_tier_levers")}, indent=2) + "\n", encoding="utf-8")
     status = Counter(r["status"] for r, _ in rows)
     golden_path = ROOT / "evals/golden_summary.json"
     golden = json.loads(golden_path.read_text()) if golden_path.exists() else {}
@@ -174,6 +174,11 @@ def export_dashboard(con, rows, ranking, membership, memo_row, out):
                                     "intent": row[5], "severity": row[6], "issue_id": row[7]}, ensure_ascii=False) + "\n")
 
 
+# The brief pools billing and support; in this data support is ~0.2% of complaints, so name it by substance.
+AREA_LABELS = {"billing_support": "billing (pricing and free-tier design; the brief's billing/support area)",
+               "playback": "playback (including downloads)"}
+
+
 def extra_citations(pack):
     rows = []
     for area, v in (pack.get("area_totals") or {}).items():
@@ -181,6 +186,10 @@ def extra_citations(pack):
                      "value": str(v["complaints"])})
         rows.append({"claim_id": v["cite_severity_sum_as"], "issue_id": "", "metric": f"area severity_sum ({area})",
                      "value": str(v["severity_sum"])})
+    for area, v in (pack.get("area_totals") or {}).items():
+        for t in v.get("by_topic", []):
+            rows.append({"claim_id": t["complaints"]["cite_as"], "issue_id": "",
+                         "metric": f"complaint reviews, topic {t['topic']} (part of {area})", "value": t["complaints"]["value"]})
     rq, cp = pack.get("recent_quarter"), pack.get("comparable_periods")
     if rq:
         p = rq["period"]
@@ -201,6 +210,12 @@ def extra_citations(pack):
             for y in ("2022", "2023"):
                 rows.append({"claim_id": t[y]["cite_as"], "issue_id": t["issue_id"],
                              "metric": f"share of complaints %, {cp['periods'][y]}", "value": t[y]["value"]})
+    ft = pack.get("free_tier_levers")
+    if ft:
+        for key, v in ft.items():
+            if isinstance(v, dict):
+                rows.append({"claim_id": v["cite_as"], "issue_id": "", "metric": f"free-tier levers: {key.replace('_', ' ')}",
+                             "value": v["value"]})
     return rows
 
 
@@ -217,7 +232,7 @@ def render_memo(con, path):
          f"{pack['quarantined']:,} quarantined, {pack['pending']:,} unprocessed. Written by the memo-writer role "
          f"(gpt-6-luna) from saved aggregates only; every number and ID below was checked by code "
          f"(validation: {'passed' if validation['passed'] else 'FAILED: ' + '; '.join(validation['problems'])}).*", "",
-         f"**Recommendation: {memo['priority_area'].replace('_', '/')} — lead issue `{memo['priority_issue_id']}` "
+         f"**Recommendation: {AREA_LABELS.get(memo['priority_area'], memo['priority_area'])} — lead issue `{memo['priority_issue_id']}` "
          f"({names.get(memo['priority_issue_id'], '')})**", "", memo["recommendation"], "", "## Alternatives considered", ""]
     L += [f"- **`{a['issue_id']}`** ({names.get(a['issue_id'], '')}): {a['why_not']}" for a in memo["alternatives"]]
     L += ["", "## Limitations", ""] + [f"- {x}" for x in memo["limitations"]]
@@ -225,6 +240,10 @@ def render_memo(con, path):
           "| Area | Topics | Complaint + cancellation reviews | Severity sum |", "|---|---|---|---|"]
     L += [f"| {a} | {', '.join(v['topics'])} | {v['complaints']:,} [{v.get('cite_complaints_as', '')}] | "
           f"{v['severity_sum']:,} [{v.get('cite_severity_sum_as', '')}] |" for a, v in pack["area_totals"].items()]
+    splits = [t for v in pack["area_totals"].values() for t in v.get("by_topic", [])]
+    if splits:
+        L += ["", "Pooled areas split by topic: " + "; ".join(
+            f"{t['topic']} {int(t['complaints']['value']):,} [{t['complaints']['cite_as']}]" for t in splits)]
     rq, cp = pack.get("recent_quarter"), pack.get("comparable_periods")
     if rq:
         L += ["", f"## Recent quarter {rq['period']} cited as [R#] (code-computed, `analysis/recent_quarter.json`)", "",
@@ -242,6 +261,18 @@ def render_memo(con, path):
               f"{cp['complaint_share_of_all_reviews_pct']['2023']['value']}% [T0b] |"]
         L += [f"| `{t['issue_id']}` share of complaints | {t['2022']['value']}% [{t['2022']['cite_as']}] | "
               f"{t['2023']['value']}% [{t['2023']['cite_as']}] |" for t in cp["issue_share_of_complaints_pct"]]
+    ft = pack.get("free_tier_levers")
+    if ft:
+        L += ["", "## Free-tier monetization levers cited as [F#] (code-computed grouping, not the baseline ranking)", "",
+              f"*{ft['definition']}*", "", "| Measure | Value |", "|---|---|"]
+        for key, label in (("full_window_complaints", "Complaints, full window"),
+                           ("full_window_share_of_complaints_pct", "Share of all complaints, full window (%)"),
+                           ("full_window_cancellation_intent", "Cancellation-intent reviews, full window"),
+                           ("recent_quarter_complaints", "Complaints, recent quarter"),
+                           ("recent_quarter_share_of_complaints_pct", "Share of complaints, recent quarter (%)"),
+                           ("share_2022_pct", "Share of complaints, Jun-Oct 2022 (%)"),
+                           ("share_2023_pct", "Share of complaints, Jun-Oct 2023 (%)")):
+            L.append(f"| {label} | {ft[key]['value']} [{ft[key]['cite_as']}] |")
     L += ["", "## Issue claims cited as [C#] (`grading/claims.csv`, recomputed by the checker)", "",
           "| Claim | Issue | Metric | Value |", "|---|---|---|---|"]
     L += [f"| {c['claim_id']} | `{c['issue_id']}` {names.get(c['issue_id'], '')} | {c['metric']} | {c['value']} |" for c in claims]

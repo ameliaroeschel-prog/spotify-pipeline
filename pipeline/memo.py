@@ -16,13 +16,16 @@ from pipeline.llm import PermanentError, TransientError, call, with_retries
 from pipeline.rank import compute_ranking
 from pipeline.state import Attempts, Ledger, new_run_id, open_state, stage, write_calls
 
-MEMO_PROMPT_VERSION = "memo-v5"
+MEMO_PROMPT_VERSION = "memo-v7"
 MEMO_EFFORT = "low"
 TOP_ISSUES = 8
 QUOTES_PER_ISSUE = 3
 # The decision question's four product areas, mapped from the eight shared topics (code-owned).
 RECENT = ("2023-08", "2023-10")                 # last three full months of the window
 COMPARABLE = {"2022": ("2022-06", "2022-10"), "2023": ("2023-06", "2023-10")}
+# Code-defined grouping for executive framing: complaints about the free tier's monetization design
+# (ads, feature restrictions that fence free from Premium, upsell pressure). Not part of the baseline ranking.
+FREE_TIER_LEVERS = ("usability.ads", "billing.free_tier_limits", "billing.premium_pressure")
 AREAS = {"access": ["access"], "usability": ["usability"], "playback": ["playback", "downloads"],
          "billing_support": ["billing", "support"]}
 
@@ -52,7 +55,22 @@ Rules:
   or shrinking, what is driving the late-2023 complaint surge, and which problems product work can fix
   directly versus which depend on a pricing/business-model decision. Let the data decide the priority;
   if the full-window and recent views point different ways, say so and explain your choice.
-Return JSON matching the schema. "recommendation" is 180-320 words of markdown prose."""
+- "billing_support" is the assignment's pooled area label. Use area_totals.billing_support.by_topic to report
+  how much is billing vs support (cite the B# IDs given there) and name the area by what the data
+  shows (e.g. "billing: pricing and free-tier design"), not as "billing/support", unless support is material.
+  Likewise "playback" pools playback and downloads.
+- free_tier_levers combines the issues about the free tier's monetization design; cite it with F IDs.
+- Write for an executive. "recommendation" is 280-420 words of markdown with exactly these bold labels, in order,
+  each starting its own paragraph or bullet list:
+  **Bottom line:** one sentence: the priority area, the lead issue, and what kind of work it is.
+  **What to do next quarter:** 2-3 concrete bullets of product work (tests/redesigns), stated as proposals,
+    with no new numbers or claimed outcomes.
+  **Why the data points here:** 3-4 bullets, each with cited numbers (full window AND recent trend).
+  **The obvious pushback:** free-tier friction is often deliberate versioning ("damaged goods" / fencing that
+    nudges upgrades). Address it head on: the goal is a better-designed fence, not removing it; say what the
+    data shows about backlash and what it cannot show (conversion, revenue, actual churn).
+  **What to pair this with:** the internal data an executive should add before committing.
+Return JSON matching the schema."""
 MEMO_SCHEMA = {
     "type": "object", "additionalProperties": False,
     "required": ["priority_area", "priority_issue_id", "recommendation", "alternatives", "limitations",
@@ -96,7 +114,11 @@ def build_pack(con):
         WHERE r.status='completed' AND x.intent IN ('complaint','cancellation') GROUP BY 1""")}
     area_totals = {a: {"aggregate_id": f"A{k}", "complaints": sum(by_topic.get(t, (0, 0))[0] for t in ts),
                        "severity_sum": sum(by_topic.get(t, (0, 0))[1] or 0 for t in ts), "topics": ts,
-                       "cite_complaints_as": f"A{k}c", "cite_severity_sum_as": f"A{k}s"}
+                       "cite_complaints_as": f"A{k}c", "cite_severity_sum_as": f"A{k}s",
+                       # per-topic split so a pooled area (billing + support) is not misread
+                       "by_topic": [{"topic": t, "complaints": {"value": str(by_topic.get(t, (0, 0))[0]),
+                                                                "cite_as": f"B{C.TOPICS.index(t) + 1}"}}
+                                    for t in ts] if len(ts) > 1 else []}
                    for k, (a, ts) in enumerate(AREAS.items(), 1)}
     # Code ranks the four areas so the model cannot get a comparison backwards (memo-v2 did).
     area_ranking = [{"rank": k, "area": a, "aggregate_id": v["aggregate_id"], "severity_sum": v["severity_sum"],
@@ -112,14 +134,39 @@ def build_pack(con):
         evidence += [{"issue_id": r["issue_id"], "review_id": rid, "quote": q[:220], "severity": s}
                      for rid, q, s in rows[:QUOTES_PER_ISSUE]]
     recent, comparable = recent_views(con, area_ranking)
+    levers = free_tier_view(con, ranking)
     pack = {"source_rows": sum(totals.values()), "completed": totals.get("completed", 0),
             "quarantined": totals.get("quarantined", 0), "pending": totals.get("pending", 0),
             "intent_counts": intents, "area_totals": area_totals, "area_ranking_by_severity_sum": area_ranking,
             "issues": [{"issue_id": r["issue_id"], "name": names.get(r["issue_id"], ("", ""))[0],
                         "description": names.get(r["issue_id"], ("", ""))[1], "rank": r["rank"]} for r in top],
             "claims": claims, "evidence": evidence,
-            "recent_quarter": recent, "comparable_periods": comparable}
+            "recent_quarter": recent, "comparable_periods": comparable, "free_tier_levers": levers}
     return pack, claims, ranking
+
+
+def free_tier_view(con, ranking):
+    """Combined complaints about the free tier's monetization levers, full window / recent / comparable."""
+    def counts(lo=None, hi=None):
+        where = "" if lo is None else "AND substr(r.review_timestamp,1,7) BETWEEN ? AND ?"
+        args = () if lo is None else (lo, hi)
+        rows = dict(con.execute(f"""SELECT m.issue_id, COUNT(*) FROM membership m JOIN reviews r USING(review_id)
+                                    WHERE 1=1 {where} GROUP BY 1""", args).fetchall())
+        return sum(rows.get(i, 0) for i in FREE_TIER_LEVERS), sum(rows.values())
+    (fa, ta), (fr, tr) = counts(), counts(*RECENT)
+    (f22, t22), (f23, t23) = counts(*COMPARABLE["2022"]), counts(*COMPARABLE["2023"])
+    canc = con.execute(f"""SELECT COUNT(*) FROM membership m JOIN reviews r USING(review_id)
+        JOIN results x ON x.text_sha = r.text_sha WHERE x.intent='cancellation'
+        AND m.issue_id IN ({','.join('?' * len(FREE_TIER_LEVERS))})""", FREE_TIER_LEVERS).fetchone()[0]
+    return {"definition": "complaint/cancellation reviews in issues " + ", ".join(FREE_TIER_LEVERS) +
+                          " (free-tier monetization design: ads, feature restrictions, upsell pressure)",
+            "full_window_complaints": {"value": str(fa), "cite_as": "F0c"},
+            "full_window_share_of_complaints_pct": {"value": f"{100 * fa / ta:.1f}", "cite_as": "F0p"},
+            "full_window_cancellation_intent": {"value": str(canc), "cite_as": "F0k"},
+            "recent_quarter_complaints": {"value": str(fr), "cite_as": "F1c"},
+            "recent_quarter_share_of_complaints_pct": {"value": f"{100 * fr / tr:.1f}", "cite_as": "F1p"},
+            "share_2022_pct": {"value": f"{100 * f22 / t22:.1f}", "cite_as": "F2a"},
+            "share_2023_pct": {"value": f"{100 * f23 / t23:.1f}", "cite_as": "F2b"}}
 
 
 def recent_views(con, area_ranking):
@@ -192,7 +239,7 @@ def citation_values(pack):
     for v in pack["area_totals"].values():
         vals[v["cite_complaints_as"]] = {str(v["complaints"])}
         vals[v["cite_severity_sum_as"]] = {str(v["severity_sum"])}
-    _cites({"r": pack.get("recent_quarter"), "t": pack.get("comparable_periods")}, vals)
+    _cites({"a": pack.get("area_totals"), "r": pack.get("recent_quarter"), "t": pack.get("comparable_periods"), "f": pack.get("free_tier_levers")}, vals)
     return vals
 
 
@@ -202,7 +249,7 @@ def validate(memo, pack):
     # memo-v3 passed every "number exists" check yet called severity sums "complaints". Now the number
     # written right before each citation must equal the cited value.
     prose = memo["recommendation"] + " " + " ".join(a["why_not"] for a in memo["alternatives"])
-    for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)[^\d\[\]]{0,60}?\[([CARTM]\d+[a-z]?)\]", prose):
+    for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)[^\d\[\]]{0,60}?\[([CARTMFB]\d+[a-z]?)\]", prose):
         num, cid = m.group(1).replace(",", ""), m.group(2)
         if cid in cite_vals and num not in cite_vals[cid]:
             problems.append(f"{num} is cited as [{cid}] but [{cid}] = {sorted(cite_vals[cid])[0]}")
@@ -210,7 +257,7 @@ def validate(memo, pack):
     review_ids = {e["review_id"] for e in pack["evidence"]}
     issue_ids = {i["issue_id"] for i in pack["issues"]}
     text = memo["recommendation"] + " " + " ".join(a["why_not"] for a in memo["alternatives"])
-    for cid in set(re.findall(r"\[([CARTM]\d+[a-z]?)\]", text)) | set(memo["cited_claim_ids"]):
+    for cid in set(re.findall(r"\[([CARTMFB]\d+[a-z]?)\]", text)) | set(memo["cited_claim_ids"]):
         if cid not in cite_vals:
             problems.append(f"unknown claim {cid}")
     for rid in set(memo["cited_review_ids"]) | set(re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", text)):
@@ -221,7 +268,7 @@ def validate(memo, pack):
     for a in memo["alternatives"]:
         if a["issue_id"] not in issue_ids:
             problems.append(f"unknown alternative issue {a['issue_id']}")
-    stripped = re.sub(r"\[[CARTM]\d+[a-z]?\]|[0-9a-f]{8}-[0-9a-f-]{27}", "", text)
+    stripped = re.sub(r"\[[CARTMFB]\d+[a-z]?\]|[0-9a-f]{8}-[0-9a-f-]{27}", "", text)
     ok = allowed_numbers(pack)
     for num in re.findall(r"(?<![\w.])\d[\d,]*(?:\.\d+)?", stripped):
         if num.replace(",", "") not in ok:
