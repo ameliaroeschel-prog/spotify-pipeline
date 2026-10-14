@@ -23,7 +23,7 @@ ranks the issues, and a code-validated memo cites issue IDs, numbers and review 
 | **Grading export** | [grading/](grading/). Checked with `check_submission.py` (see [Reproduce](#reproduce-without-an-api-key)). |
 | **Cost calculator** | [cost/](cost/), with the [measured 100-review report](cost/report.md) and [refreshed projections](cost/refresh_cp500-cp10k.md) |
 | **Evaluations** | [evals/](evals/): golden set, verifier and system tests |
-| **Resume recording** | ⟪RECORDING_LINK⟫, plus [checkpoint_before.json](grading/checkpoint_before.json) and [checkpoint_after.json](grading/checkpoint_after.json) |
+| **Resume recording** | [evidence/resume_demo_recording.mov](evidence/resume_demo_recording.mov) (screen recording of [scripts/resume_demo.sh](scripts/resume_demo.sh); download to play), plus [checkpoint_before.json](grading/checkpoint_before.json) and [checkpoint_after.json](grading/checkpoint_after.json) |
 
 ---
 
