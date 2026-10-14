@@ -9,3 +9,16 @@ __pycache__/
 local-reference.json
 self-check.json
 runs/*/state.db*
+
+# Run folders: keep small evidence files, not databases or duplicate large exports
+runs/**/records.jsonl.gz
+runs/**/membership.csv
+runs/**/calls.jsonl.gz
+runs/**/analysis/
+runs/*.csv
+runs/mocktest/
+runs/mockrun/
+runs/smoke/
+*.log
+!runs/full/full_run.log
+__pycache__/

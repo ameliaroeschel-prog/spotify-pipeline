@@ -1,0 +1,41 @@
+{
+  "priority_area": "usability",
+  "priority_issue_id": "usability.ads",
+  "recommendation": "Prioritize **usability**, with **Too Many Ads** as the lead issue. Usability ranks first by severity sum, with 33 severity points across 13 complaints [A2]. Within that area, reviewers say ads are too frequent or loud and interrupt playback; one says, “always plays adds instead of songs” (review cf6166ae-d71a-4839-9add-088645ad3b78). This lead issue has 7 complaints [C9] and a severity sum of 15 [C10]. It is a broader complaint signal than the other supplied usability issue, **Missing Music Playback Controls**, which has 3 complaints [C13] and a severity sum of 9 [C14]; that issue does, however, have a higher mean severity of 3.000000 [C15]. **Billing/support** is the nearest area alternative by the supplied ranking: it has 11 complaints and a severity sum of 30 [A4]. Its leading supplied issue, **Free Tier Restricts Music Controls**, has a severity sum of 23 [C2], so it merits consideration, but the area ranks below usability. This recommendation reflects complaint and severity aggregates, not proof of product impact. Addressing the lead issue should be scoped to the supplied description: ads reported as too frequent or loud and interrupting music playback.",
+  "alternatives": [
+    {
+      "issue_id": "billing.free_tier_limits",
+      "why_not": "A substantial alternative: Free Tier Restricts Music Controls has 8 complaints [C1] and a severity sum of 23 [C2]. Its billing/support area ranks second, behind usability, by severity sum."
+    },
+    {
+      "issue_id": "usability.controls_navigation",
+      "why_not": "This usability issue describes missing or impaired basic playback controls. It has 3 complaints [C13] and severity sum 9 [C14], below Too Many Ads on those supplied issue-level measures, although its mean severity is 3.000000 [C15]."
+    },
+    {
+      "issue_id": "playback.crashes_wont_open",
+      "why_not": "The playback area ranks third with 8 complaints and severity sum 28 [A3]. The supplied crashes/loading issue has 2 complaints [C21] and severity sum 8 [C22]."
+    }
+  ],
+  "limitations": [
+    "The data are pre-computed classifications of historical Google Play reviews, not a causal analysis or a forecast of outcomes.",
+    "Reviews are self-selected public feedback and may not represent Spotify users overall.",
+    "Cancellation language in reviews is stated intent, not observed churn.",
+    "The evidence quotes illustrate reported experiences; they do not establish prevalence or validate the classification."
+  ],
+  "cited_claim_ids": [
+    "C9",
+    "C10",
+    "C13",
+    "C14",
+    "C15",
+    "C1",
+    "C2",
+    "C21",
+    "C22"
+  ],
+  "cited_review_ids": [
+    "cf6166ae-d71a-4839-9add-088645ad3b78"
+  ],
+  "model": "gpt-6-luna",
+  "generated_at": 1791930039.8326788
+}

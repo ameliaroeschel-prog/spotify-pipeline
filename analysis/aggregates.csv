@@ -1,0 +1,9 @@
+aggregate_id,metric,area,topics,value
+A1c,complaint_count,access,access,9666
+A1s,severity_sum,access,access,37494
+A2c,complaint_count,usability,usability,79177
+A2s,severity_sum,usability,usability,197874
+A3c,complaint_count,playback,playback;downloads,43381
+A3s,severity_sum,playback,playback;downloads,145242
+A4c,complaint_count,billing_support,billing;support,61298
+A4s,severity_sum,billing_support,billing;support,171603

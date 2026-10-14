@@ -1,0 +1,5 @@
+aggregate_id,area,topics,complaints,severity_sum
+A1,access,access,2,8
+A2,usability,usability,14,35
+A3,playback,playback;downloads,8,28
+A4,billing_support,billing;support,11,30

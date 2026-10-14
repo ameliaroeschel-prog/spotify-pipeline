@@ -1,0 +1,99 @@
+{
+  "periods": [
+    "2022-06..2022-10",
+    "2023-06..2023-10"
+  ],
+  "complaint_denominators": {
+    "2022-06..2022-10": 45353,
+    "2023-06..2023-10": 161354
+  },
+  "partial_months_excluded": [
+    "2022-05",
+    "2023-11"
+  ],
+  "largest_share_increases": [
+    {
+      "issue_id": "other.general",
+      "complaints_2022": 3691,
+      "share_2022": 0.0814,
+      "complaints_2023": 53835,
+      "share_2023": 0.3336,
+      "share_change_pts": 25.23
+    },
+    {
+      "issue_id": "billing.free_tier_limits",
+      "complaints_2022": 3815,
+      "share_2022": 0.0841,
+      "complaints_2023": 27064,
+      "share_2023": 0.1677,
+      "share_change_pts": 8.36
+    },
+    {
+      "issue_id": "other.bad_update_generic",
+      "complaints_2022": 342,
+      "share_2022": 0.0075,
+      "complaints_2023": 10359,
+      "share_2023": 0.0642,
+      "share_change_pts": 5.67
+    },
+    {
+      "issue_id": "billing.premium_pressure",
+      "complaints_2022": 379,
+      "share_2022": 0.0084,
+      "complaints_2023": 7101,
+      "share_2023": 0.044,
+      "share_change_pts": 3.57
+    },
+    {
+      "issue_id": "usability.general",
+      "complaints_2022": 284,
+      "share_2022": 0.0063,
+      "complaints_2023": 3754,
+      "share_2023": 0.0233,
+      "share_change_pts": 1.7
+    }
+  ],
+  "largest_share_decreases": [
+    {
+      "issue_id": "usability.ads",
+      "complaints_2022": 9211,
+      "share_2022": 0.2031,
+      "complaints_2023": 14208,
+      "share_2023": 0.0881,
+      "share_change_pts": -11.5
+    },
+    {
+      "issue_id": "playback.crashes_wont_open",
+      "complaints_2022": 2816,
+      "share_2022": 0.0621,
+      "complaints_2023": 1854,
+      "share_2023": 0.0115,
+      "share_change_pts": -5.06
+    },
+    {
+      "issue_id": "playback.stops_pauses",
+      "complaints_2022": 2810,
+      "share_2022": 0.062,
+      "complaints_2023": 2618,
+      "share_2023": 0.0162,
+      "share_change_pts": -4.57
+    },
+    {
+      "issue_id": "playback.loading_network",
+      "complaints_2022": 2596,
+      "share_2022": 0.0572,
+      "complaints_2023": 2378,
+      "share_2023": 0.0147,
+      "share_change_pts": -4.25
+    },
+    {
+      "issue_id": "usability.library_playlists",
+      "complaints_2022": 2463,
+      "share_2022": 0.0543,
+      "complaints_2023": 2765,
+      "share_2023": 0.0171,
+      "share_change_pts": -3.72
+    }
+  ],
+  "note": "Shares of complaint/cancellation reviews in each period. Review volume itself spikes in 2023-07 and 2023-10, so compare shares, not counts. Self-selected reviews; descriptive only."
+}

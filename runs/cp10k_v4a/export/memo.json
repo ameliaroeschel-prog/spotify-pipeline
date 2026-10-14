@@ -1,0 +1,39 @@
+{
+  "priority_area": "usability",
+  "priority_issue_id": "usability.ads",
+  "recommendation": "Prioritize **usability**, with **Too Many Ads** as the lead issue. Usability ranks first by severity sum, with 3,182 and 1,259 complaints [A2]. Within that area, Too Many Ads has 603 complaints and severity sum 1,301 [C9][C10], and reviews describe ads as frequent or excessive, including “One song one ad. Too much ad.” (review 79301447-1a7c-49ed-ac4e-b3b398dc65ea). This lead issue is supported by substantially more complaints than Confusing and Unreliable Playback Controls, which has 209 [C13], though controls have severity sum 608 [C14]. Billing/support is the strongest alternative area but ranks second, with severity sum 2,705 and 965 complaints [A4]. Its lead supplied issue, Basic Features Locked Behind Premium, has 665 complaints [C5]; one reviewer says they “can't even pick a certain song without Spotify premium” (review d146397f-4a94-4980-be00-ae9212eca3a7). Playback ranks third, with severity sum 2,205 and 657 complaints [A3]. Addressing ad frequency is a focused usability bet, not evidence of a promised retention or business outcome.",
+  "alternatives": [
+    {
+      "issue_id": "billing.free_tier_limits",
+      "why_not": "Billing/support ranks second by area severity sum, not first [A4]. Basic Features Locked Behind Premium is a substantial alternative with 665 complaints [C5], but it is outside the recommended usability focus."
+    },
+    {
+      "issue_id": "usability.controls_navigation",
+      "why_not": "This is another usability candidate, but it has 209 complaints [C13] versus 603 for Too Many Ads [C9]."
+    },
+    {
+      "issue_id": "playback.loading_network",
+      "why_not": "Playback ranks third by area severity sum [A3], with 657 complaints [A3]; Loading and Connection Problems has 145 complaints [C17]."
+    }
+  ],
+  "limitations": [
+    "These are aggregates of classified historical Google Play reviews, not a representative sample of all Spotify users; reviewers are self-selected public feedback.",
+    "Counts and severity sums do not establish causes, product impact, or business outcomes.",
+    "Cancellation language in reviews indicates stated intent, not observed churn.",
+    "General App Dissatisfaction does not support a specific product fix and is not recommended as an issue."
+  ],
+  "cited_claim_ids": [
+    "C5",
+    "C9",
+    "C10",
+    "C13",
+    "C14",
+    "C17"
+  ],
+  "cited_review_ids": [
+    "79301447-1a7c-49ed-ac4e-b3b398dc65ea",
+    "d146397f-4a94-4980-be00-ae9212eca3a7"
+  ],
+  "model": "gpt-6-luna",
+  "generated_at": 1791929470.3961458
+}

@@ -1,0 +1,38 @@
+{
+  "run_id": "20261013T151254-9e2eba",
+  "synthetic": false,
+  "source_rows": 10000,
+  "completed": 9996,
+  "quarantined": 4,
+  "pending": 0,
+  "quarantine_reasons": {
+    "enrich_failed:invalid_label_values": 4
+  },
+  "distinct_texts": 8448,
+  "cache_reuse_rows": 1552,
+  "golden": {
+    "n": 50,
+    "topic_agreement": 0.78,
+    "intent_agreement": 0.9,
+    "severity_exact": 0.92,
+    "severity_mae": 0.14,
+    "label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3"
+  },
+  "verifier": {
+    "sample_size": 169,
+    "topic_agreement": 0.799,
+    "intent_agreement": 0.817,
+    "severity_exact": 0.852,
+    "severity_mae": 0.172
+  },
+  "cost_usd": 0.068225,
+  "cost_by_role_usd": {
+    "enrich": 0.050425,
+    "group": 0.003094,
+    "memo": 0.000664,
+    "verify": 0.014042
+  },
+  "wall_seconds": 334.3,
+  "model": "gpt-6-luna",
+  "label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3"
+}

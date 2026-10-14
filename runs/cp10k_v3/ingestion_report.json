@@ -1,0 +1,115 @@
+{
+  "input_path": "data/analysis_10000.csv",
+  "input_sha256": "eaa62ca6d44d717302904a9c922e99b0b4584d174309cb45295ecbc2ba2a91b5",
+  "official_profile": {
+    "file_sha256": "eaa62ca6d44d717302904a9c922e99b0b4584d174309cb45295ecbc2ba2a91b5",
+    "parsed_rows_sha256": "3a21df52adbf2ab3185b73e93b30a9539c1806379e097b0f4a904c869ed40e20",
+    "counts": {
+      "records": 10000,
+      "duplicate_review_ids": 0,
+      "empty_review_text": 0,
+      "missing_app_version": 2447
+    },
+    "reviews_by_month": {
+      "2023-07": 1246,
+      "2023-02": 337,
+      "2023-09": 625,
+      "2023-04": 359,
+      "2022-10": 412,
+      "2023-10": 1381,
+      "2023-11": 502,
+      "2022-12": 520,
+      "2022-09": 438,
+      "2023-06": 391,
+      "2023-03": 425,
+      "2022-07": 506,
+      "2023-05": 423,
+      "2023-08": 459,
+      "2022-06": 421,
+      "2023-01": 451,
+      "2022-08": 466,
+      "2022-11": 406,
+      "2022-05": 232
+    },
+    "reviews_by_rating": {
+      "3": 498,
+      "5": 4512,
+      "1": 3685,
+      "2": 469,
+      "4": 836
+    },
+    "first_review": "2022-05-17 02:29:15",
+    "last_review": "2023-11-15 22:13:05"
+  },
+  "records": 10000,
+  "duplicate_review_ids_rejected": 0,
+  "empty_review_text_quarantined": 0,
+  "nonempty_to_classify": 10000,
+  "distinct_nonempty_texts": 8448,
+  "exact_duplicate_rows_reusable": 1552,
+  "missing_app_version": 2447,
+  "most_repeated_texts": [
+    {
+      "text": "Good",
+      "count": 214
+    },
+    {
+      "text": "Nice",
+      "count": 79
+    },
+    {
+      "text": "Great",
+      "count": 60
+    },
+    {
+      "text": "Awesome",
+      "count": 53
+    },
+    {
+      "text": "Love it",
+      "count": 48
+    },
+    {
+      "text": "Excellent",
+      "count": 48
+    },
+    {
+      "text": "Super",
+      "count": 37
+    },
+    {
+      "text": "Worst app",
+      "count": 34
+    },
+    {
+      "text": "Good app",
+      "count": 31
+    },
+    {
+      "text": "Very good",
+      "count": 30
+    },
+    {
+      "text": "Nice app",
+      "count": 28
+    },
+    {
+      "text": "Best",
+      "count": 24
+    },
+    {
+      "text": "Worst",
+      "count": 23
+    },
+    {
+      "text": "Very bad",
+      "count": 21
+    },
+    {
+      "text": "Amazing",
+      "count": 21
+    }
+  ],
+  "runtime_seconds": 0.2,
+  "model_calls": 0
+}

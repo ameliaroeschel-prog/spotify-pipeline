@@ -1,0 +1,33 @@
+{
+  "priority_area": "usability",
+  "priority_issue_id": "usability.ads",
+  "recommendation": "Prioritize **usability**, with **Too Many Repetitive Ads** as the lead issue. Usability ranks first by severity sum in the supplied area ranking, with 3,193 severity points and 1,266 complaints [A2]. Within that area, repetitive ads are the largest specified issue by complaint count: 602 complaints [C9], with a severity sum of 1288 [C10]. Reviews describe interruptions directly: “One song one ad. Too much ad.” (review 79301447-1a7c-49ed-ac4e-b3b398dc65ea). This makes ad experience a concrete lead for usability work, while the area-level ranking supports investing in usability overall. **Billing/support** is the closest alternative in the area ranking, with 2,712 severity points and 964 complaints [A4]; its free-tier-limits issue has 668 complaints [C5] and severity sum of 1980 [C6], so it merits consideration but is not the top-ranked area. Playback ranks below billing/support, with 2,183 severity points and 653 complaints [A3]. This recommendation prioritizes the leading usability issue; the aggregates do not establish which intervention would have the greatest product impact.",
+  "alternatives": [
+    {
+      "issue_id": "billing.free_tier_limits",
+      "why_not": "A substantial alternative: 668 complaints [C5] and severity sum of 1980 [C6]. Billing/support ranks below usability by area severity sum [A4]; the supplied data does not establish that addressing free-tier limits would outperform the recommended usability focus."
+    },
+    {
+      "issue_id": "usability.controls_navigation",
+      "why_not": "Also within the recommended area, but has 203 complaints [C13] and severity sum of 592 [C14], compared with the ad issue’s 602 complaints [C9] and severity sum of 1288 [C10]."
+    }
+  ],
+  "limitations": [
+    "The evidence consists of pre-computed aggregates and selected public reviews; reviewers are self-selected and may not represent all Spotify users.",
+    "Complaint and severity aggregates do not establish causal impact, expected outcomes, or which proposed intervention would be most effective.",
+    "Cancellation language, where present in reviews, indicates stated intent and is not observed churn."
+  ],
+  "cited_claim_ids": [
+    "C5",
+    "C6",
+    "C9",
+    "C10",
+    "C13",
+    "C14"
+  ],
+  "cited_review_ids": [
+    "79301447-1a7c-49ed-ac4e-b3b398dc65ea"
+  ],
+  "model": "gpt-6-luna",
+  "generated_at": 1791929908.54746
+}

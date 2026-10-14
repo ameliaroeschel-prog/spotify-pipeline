@@ -1,0 +1,31 @@
+{
+  "priority_area": "billing_support",
+  "priority_issue_id": "billing.free_tier_limits",
+  "recommendation": "**Prioritize billing/support, led by Free Tier Playback Restrictions.** This is not the full-window severity leader: usability ranks first with a severity sum of 197874 [A2s], while billing/support ranks second with 171603 [A4s]. But the lead issue is the largest specific actionable signal in both the full-window claims and the recent quarter: 41518 complaints [C5] overall and 24198 complaints [R1c], representing 23.9% of recent complaints [R1p]. Its share of complaints increased from 8.4% [T2a] in the earlier comparable period to 16.8% [T2b] in the later one. The quotes describe restrictions on shuffle and other playback controls (e7747485-42c5-4bb9-b1e2-1b4044eedb5a; 9b42b7f8-2477-4516-b2de-6d46831fbad9). Addressing those limits is not purely a product-quality fix: it requires a pricing/business-model decision about what free listeners can do.\n\nThe complaint surge is broad: complaint share of all reviews rose from 30.6% [T0a] to 59.0% [T0b] in the comparable periods. General dissatisfaction and generic update complaints grew sharply, to 33.4% [T4b] and 6.4% [T5b] of complaints, respectively; neither identifies a specific fix, so do not make them the lead. Free-tier restrictions and premium pressure also grew, while ads fell from 20.3% [T1a] to 8.8% [T1b]. Usability remains the strongest full-window alternative, with 79177 complaint reviews [A2c], including 37359 ads complaints [C9], but ads are a shrinking share. Playback is another alternative: 43381 complaint reviews [A3c], and crashes fell from 6.2% [T6a] to 1.1% [T6b].\n\nTreat public reviews as self-selected evidence; cancellation language is stated intent, not observed churn. Recent cancellation-intent reviews total 14101 [R0k]. The late-period deterioration is not proof of causality, and broad dissatisfaction/update feedback limits diagnosis.",
+  "alternatives": [
+    {
+      "issue_id": "usability.ads",
+      "why_not": "Usability ranks first by full-window severity, but ads' comparable-period share fell from 20.3% [T1a] to 8.8% [T1b], while free-tier restrictions grew."
+    },
+    {
+      "issue_id": "playback.stops_pauses",
+      "why_not": "Playback has fewer full-window complaint reviews than usability or billing/support, and the supplied recency comparison shows crashes shrinking; it does not establish a current rise in stops or pauses."
+    }
+  ],
+  "limitations": [
+    "Reviews are self-selected public feedback and may not represent all listeners.",
+    "Cancellation language is stated intent, not observed churn.",
+    "The recent-period aggregate identifies trends but does not establish their causes; generic dissatisfaction and update complaints do not specify a consistent product problem.",
+    "Free-tier restrictions require a pricing/business-model decision, not solely product implementation."
+  ],
+  "cited_claim_ids": [
+    "C5",
+    "C9"
+  ],
+  "cited_review_ids": [
+    "e7747485-42c5-4bb9-b1e2-1b4044eedb5a",
+    "9b42b7f8-2477-4516-b2de-6d46831fbad9"
+  ],
+  "model": "gpt-6-luna",
+  "generated_at": 1791943795.726083
+}

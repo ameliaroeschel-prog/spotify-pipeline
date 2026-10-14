@@ -1,0 +1,81 @@
+{
+  "run_id": "20261013T150204-0c203a",
+  "input": "data/analysis_10000.csv",
+  "provider": "openai",
+  "model": "gpt-6-luna",
+  "label_config": "gpt-6-luna+effort-none+enrich-v3+schema-v2",
+  "service_tier": "flex",
+  "workers": 8,
+  "budget_usd": 0.5,
+  "verify_rate": 0.02,
+  "ingest": "reused saved ingestion",
+  "enrich": {
+    "batches_done": 0,
+    "completed_texts": 0,
+    "invalid_first_pass": 0,
+    "quarantined": 0,
+    "stopped_reason": null,
+    "cache_hits_reviews": 0,
+    "requests_planned": 0,
+    "run_id": "20261013T150204-0c203a",
+    "phase": "resume",
+    "label_config": "gpt-6-luna+effort-none+enrich-v3+schema-v2",
+    "provider": "openai",
+    "service_tier": "flex",
+    "workers": 8,
+    "budget_usd": 0.5,
+    "spent_usd_total": 0.07779,
+    "wall_seconds": 0.0,
+    "review_status_counts": {
+      "completed": 9975,
+      "quarantined": 25
+    }
+  },
+  "verify": {
+    "verified_new": 0,
+    "reused": 169,
+    "failed": 0,
+    "stopped": null,
+    "verify_config": "gpt-6-luna+decisions+verify-v1",
+    "sample_size": 169,
+    "topic_agreement": 0.781,
+    "intent_agreement": 0.822,
+    "severity_exact": 0.846,
+    "severity_mae": 0.178,
+    "sentiment_mae": 0.215,
+    "records_with_any_disagreement": 74,
+    "spent_usd_total": 0.07779
+  },
+  "group": {
+    "members": 4585,
+    "issues": 33,
+    "rules_version": "issues-v2",
+    "named_new": 33,
+    "reused": 0,
+    "failed": 0
+  },
+  "memo_validation": {
+    "passed": true,
+    "problems": []
+  },
+  "export": {
+    "records": 10000,
+    "status_counts": {
+      "completed": 9975,
+      "quarantined": 25
+    },
+    "issues": 33,
+    "memberships": 4585,
+    "claims": 32
+  },
+  "wall_seconds": 61.44,
+  "spent_usd_all_runs_on_this_dir": 0.080985,
+  "new_calls_this_run": {
+    "group": 33,
+    "memo": 1
+  },
+  "status_counts": {
+    "completed": 9975,
+    "quarantined": 25
+  }
+}

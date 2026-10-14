@@ -1,0 +1,53 @@
+{
+  "input_path": "data/cost_100.csv",
+  "input_sha256": "c884ac3b9be5066995d5063f96ad9af6e5e082975788c1684c4f6b6ea661dd0e",
+  "official_profile": {
+    "file_sha256": "c884ac3b9be5066995d5063f96ad9af6e5e082975788c1684c4f6b6ea661dd0e",
+    "parsed_rows_sha256": "23f840350257c058a03a508754384902373a593c09dbac3d1bd0481651fa1733",
+    "counts": {
+      "records": 100,
+      "duplicate_review_ids": 0,
+      "empty_review_text": 0,
+      "missing_app_version": 18
+    },
+    "reviews_by_month": {
+      "2023-07": 11,
+      "2023-02": 4,
+      "2023-09": 6,
+      "2023-04": 4,
+      "2022-10": 4,
+      "2023-10": 19,
+      "2023-11": 5,
+      "2022-12": 2,
+      "2022-09": 5,
+      "2023-06": 4,
+      "2023-03": 7,
+      "2022-07": 5,
+      "2023-05": 5,
+      "2023-08": 3,
+      "2022-06": 5,
+      "2023-01": 4,
+      "2022-08": 6,
+      "2022-11": 1
+    },
+    "reviews_by_rating": {
+      "3": 6,
+      "5": 43,
+      "1": 33,
+      "2": 8,
+      "4": 10
+    },
+    "first_review": "2022-06-02 10:30:18",
+    "last_review": "2023-11-13 15:07:19"
+  },
+  "records": 100,
+  "duplicate_review_ids_rejected": 0,
+  "empty_review_text_quarantined": 0,
+  "nonempty_to_classify": 100,
+  "distinct_nonempty_texts": 100,
+  "exact_duplicate_rows_reusable": 0,
+  "missing_app_version": 18,
+  "most_repeated_texts": [],
+  "runtime_seconds": 0.0,
+  "model_calls": 0
+}

@@ -1,0 +1,170 @@
+{
+  "recent_quarter": {
+    "period": "2023-08..2023-10",
+    "note": "last three full months; issue counts are memberships",
+    "complaints_total": {
+      "value": "101420",
+      "cite_as": "R0c"
+    },
+    "complaint_share_of_all_reviews_pct": {
+      "value": "62.9",
+      "cite_as": "R0p"
+    },
+    "cancellation_intent_reviews": {
+      "value": "14101",
+      "cite_as": "R0k"
+    },
+    "top_issues": [
+      {
+        "issue_id": "billing.free_tier_limits",
+        "complaints": {
+          "value": "24198",
+          "cite_as": "R1c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "23.9",
+          "cite_as": "R1p"
+        }
+      },
+      {
+        "issue_id": "other.general",
+        "complaints": {
+          "value": "17572",
+          "cite_as": "R2c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "17.3",
+          "cite_as": "R2p"
+        }
+      },
+      {
+        "issue_id": "other.bad_update_generic",
+        "complaints": {
+          "value": "9946",
+          "cite_as": "R3c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "9.8",
+          "cite_as": "R3p"
+        }
+      },
+      {
+        "issue_id": "usability.ads",
+        "complaints": {
+          "value": "9179",
+          "cite_as": "R4c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "9.1",
+          "cite_as": "R4p"
+        }
+      },
+      {
+        "issue_id": "billing.premium_pressure",
+        "complaints": {
+          "value": "6626",
+          "cite_as": "R5c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "6.5",
+          "cite_as": "R5p"
+        }
+      },
+      {
+        "issue_id": "usability.controls_navigation",
+        "complaints": {
+          "value": "4031",
+          "cite_as": "R6c"
+        },
+        "share_of_recent_complaints_pct": {
+          "value": "4.0",
+          "cite_as": "R6p"
+        }
+      }
+    ]
+  },
+  "comparable_periods": {
+    "periods": {
+      "2022": "2022-06..2022-10",
+      "2023": "2023-06..2023-10"
+    },
+    "complaint_share_of_all_reviews_pct": {
+      "2022": {
+        "value": "30.6",
+        "cite_as": "T0a"
+      },
+      "2023": {
+        "value": "59.0",
+        "cite_as": "T0b"
+      }
+    },
+    "issue_share_of_complaints_pct": [
+      {
+        "issue_id": "usability.ads",
+        "2022": {
+          "value": "20.3",
+          "cite_as": "T1a"
+        },
+        "2023": {
+          "value": "8.8",
+          "cite_as": "T1b"
+        }
+      },
+      {
+        "issue_id": "billing.free_tier_limits",
+        "2022": {
+          "value": "8.4",
+          "cite_as": "T2a"
+        },
+        "2023": {
+          "value": "16.8",
+          "cite_as": "T2b"
+        }
+      },
+      {
+        "issue_id": "billing.premium_pressure",
+        "2022": {
+          "value": "0.8",
+          "cite_as": "T3a"
+        },
+        "2023": {
+          "value": "4.4",
+          "cite_as": "T3b"
+        }
+      },
+      {
+        "issue_id": "other.general",
+        "2022": {
+          "value": "8.1",
+          "cite_as": "T4a"
+        },
+        "2023": {
+          "value": "33.4",
+          "cite_as": "T4b"
+        }
+      },
+      {
+        "issue_id": "other.bad_update_generic",
+        "2022": {
+          "value": "0.8",
+          "cite_as": "T5a"
+        },
+        "2023": {
+          "value": "6.4",
+          "cite_as": "T5b"
+        }
+      },
+      {
+        "issue_id": "playback.crashes_wont_open",
+        "2022": {
+          "value": "6.2",
+          "cite_as": "T6a"
+        },
+        "2023": {
+          "value": "1.1",
+          "cite_as": "T6b"
+        }
+      }
+    ]
+  }
+}

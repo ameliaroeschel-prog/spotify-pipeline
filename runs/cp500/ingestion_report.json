@@ -1,0 +1,99 @@
+{
+  "input_path": "data/checkpoint_500.csv",
+  "input_sha256": "a94e31663ee7b7eaa77e23b7a8425b530cc0c866ed5e714953172a0afef6a12f",
+  "official_profile": {
+    "file_sha256": "a94e31663ee7b7eaa77e23b7a8425b530cc0c866ed5e714953172a0afef6a12f",
+    "parsed_rows_sha256": "27cfa70c490531866d922b5020d8329437869b06ab0ea1026893108eb4d814ab",
+    "counts": {
+      "records": 500,
+      "duplicate_review_ids": 0,
+      "empty_review_text": 0,
+      "missing_app_version": 108
+    },
+    "reviews_by_month": {
+      "2023-07": 56,
+      "2023-02": 23,
+      "2023-09": 25,
+      "2023-04": 21,
+      "2022-10": 18,
+      "2023-10": 79,
+      "2023-11": 28,
+      "2022-12": 21,
+      "2022-09": 22,
+      "2023-06": 19,
+      "2023-03": 20,
+      "2022-07": 21,
+      "2023-05": 22,
+      "2023-08": 26,
+      "2022-06": 19,
+      "2023-01": 17,
+      "2022-08": 31,
+      "2022-11": 18,
+      "2022-05": 14
+    },
+    "reviews_by_rating": {
+      "3": 19,
+      "5": 216,
+      "1": 187,
+      "2": 33,
+      "4": 45
+    },
+    "first_review": "2022-05-19 14:22:29",
+    "last_review": "2023-11-15 15:44:48"
+  },
+  "records": 500,
+  "duplicate_review_ids_rejected": 0,
+  "empty_review_text_quarantined": 0,
+  "nonempty_to_classify": 500,
+  "distinct_nonempty_texts": 479,
+  "exact_duplicate_rows_reusable": 21,
+  "missing_app_version": 108,
+  "most_repeated_texts": [
+    {
+      "text": "Good",
+      "count": 7
+    },
+    {
+      "text": "Great",
+      "count": 4
+    },
+    {
+      "text": "Nice",
+      "count": 3
+    },
+    {
+      "text": "Worst app",
+      "count": 3
+    },
+    {
+      "text": "Excellent",
+      "count": 3
+    },
+    {
+      "text": "Love it",
+      "count": 2
+    },
+    {
+      "text": "Hate this application",
+      "count": 2
+    },
+    {
+      "text": "Superb",
+      "count": 2
+    },
+    {
+      "text": "Awesome",
+      "count": 2
+    },
+    {
+      "text": "Op",
+      "count": 2
+    },
+    {
+      "text": "Very good",
+      "count": 2
+    }
+  ],
+  "runtime_seconds": 0.01,
+  "model_calls": 0
+}

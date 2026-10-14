@@ -1,0 +1,33 @@
+{
+  "priority_area": "billing_support",
+  "priority_issue_id": "billing.free_tier_limits",
+  "recommendation": "Prioritize **billing_support**, led by **Basic Features Require Premium**. The area has 951 complaints [A4], and this issue has 365 complaints [C5] with a severity sum of 1088 [C6]. Its supplied description says free users object to restrictions on choosing songs, controlling playback, and other basic features. One reviewer says, “you can't even pick a certain song without Spotify premium” (review d146397f-4a94-4980-be00-ae9212eca3a7); another says basic features now require payment and reports uninstalling (review f56c4cf1-e30c-4a98-95f8-c327304870e4). Compare usability: it has 1,163 complaints [A2], but the supplied lead ad issue describes interruptions rather than restrictions on basic controls. Playback has 759 complaints [A3]; its general issue has a higher mean severity of 3.295019 [C19], but fewer complaints at 261 [C17]. Those are credible alternatives, but billing_support leads on area-level complaint volume, while the free-tier issue offers a concrete product focus. Treat this as a prioritization signal, not evidence of business impact: public reviewers self-select, and stated intent to uninstall is not observed churn.",
+  "alternatives": [
+    {
+      "issue_id": "usability.ads",
+      "why_not": "A substantial alternative: 471 complaints [C9] about frequent, repetitive ads. The usability area has 1,163 complaints [A2], but the lead issue focuses on ad interruptions rather than restricted basic features."
+    },
+    {
+      "issue_id": "playback.general",
+      "why_not": "Playback has 759 complaints [A3], and this issue has mean severity 3.295019 [C19]. It has 261 complaints [C17], fewer than the selected lead issue."
+    }
+  ],
+  "limitations": [
+    "Historical, classified Google Play reviews are self-selected public feedback and may not represent all users.",
+    "Cancellation or uninstall language is stated intent, not observed churn.",
+    "Aggregates and supplied quotes do not establish causal effects or expected business impact."
+  ],
+  "cited_claim_ids": [
+    "C5",
+    "C6",
+    "C17",
+    "C19",
+    "C9"
+  ],
+  "cited_review_ids": [
+    "d146397f-4a94-4980-be00-ae9212eca3a7",
+    "f56c4cf1-e30c-4a98-95f8-c327304870e4"
+  ],
+  "model": "gpt-6-luna",
+  "generated_at": 1791928985.786088
+}

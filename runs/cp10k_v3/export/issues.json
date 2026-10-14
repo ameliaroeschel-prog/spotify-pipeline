@@ -1,0 +1,516 @@
+[
+  {
+    "issue_id": "other.general",
+    "name": "General App Dissatisfaction",
+    "description": "Reviewers broadly describe Spotify as a bad or disliked app, sometimes saying they plan to uninstall it or prefer another service.",
+    "topic": "other",
+    "example_review_ids": [
+      "14a5b8b7-eae3-444b-8c1a-223ea468f980",
+      "f5cc511f-ae71-4985-a737-1c0075156e2b",
+      "809b3291-15ea-4b82-a50f-ab1c323fc5fa",
+      "45018b07-c7d8-4935-8c40-c7d4c18467d0",
+      "1ca850b5-4a20-469a-8605-b018240b7b46",
+      "f88d6d14-fcd6-442a-9924-40e0f21381d7",
+      "94de1725-c137-4e50-bda0-99e3cf48fe15",
+      "f7bbd417-2c54-4886-a588-e10a196e377f"
+    ]
+  },
+  {
+    "issue_id": "usability.ads",
+    "name": "Too Many Ads Interrupt Listening",
+    "description": "Frequent ads between songs interrupt listening and take up too much time.",
+    "topic": "usability",
+    "example_review_ids": [
+      "79301447-1a7c-49ed-ac4e-b3b398dc65ea",
+      "a259202a-64bb-4286-a559-c04c49b72cc5",
+      "6d9754c0-69f4-4710-ba36-056f28640991",
+      "e2466f8d-ab7d-4a8f-8f29-c6726c45d717",
+      "a10cfede-5647-4f56-a094-752c34b9dd6c",
+      "9483c420-ea92-4e6c-b4f3-e428bd69f1a4",
+      "f6fd64f6-073f-4ce0-974d-7e293684b586",
+      "bb6fdd00-5c4a-4e36-a4e2-0fe63ea239e1"
+    ]
+  },
+  {
+    "issue_id": "billing.free_tier_limits",
+    "name": "Basic Features Require Premium",
+    "description": "Free users complain that choosing songs, controlling playback, and other basic features are restricted to Premium.",
+    "topic": "billing",
+    "example_review_ids": [
+      "d146397f-4a94-4980-be00-ae9212eca3a7",
+      "a8a09a7e-59ea-49d2-83a4-4c83ac52cb55",
+      "f56c4cf1-e30c-4a98-95f8-c327304870e4",
+      "949eb6d0-d1d3-4e38-8d58-65d7fe805b3a",
+      "54fe9398-6b25-4d7e-9262-9275dcdbc3df",
+      "40ddeafd-a71d-4757-8103-a86b47ba18ea",
+      "e9a34387-a2a7-4adc-868b-5207dcaec1aa",
+      "66898cdd-d707-4c0e-9737-4652debf705c"
+    ]
+  },
+  {
+    "issue_id": "billing.general",
+    "name": "Basic Features Locked Behind Premium",
+    "description": "Users complain that basic controls and features are restricted to premium, making the free app feel unusable.",
+    "topic": "billing",
+    "example_review_ids": [
+      "aa79fe52-744f-4cab-adb2-b99aca01fdae",
+      "da627078-9daf-408c-aa08-2ef002ca6b13",
+      "486507c8-d483-4575-9755-3e991e55c2e6",
+      "8033fdb1-bf79-4b7f-a6bd-fe1dfa7b3251",
+      "56657e88-7765-4a5b-9323-086dca34a733",
+      "79bfe0dc-2854-4cbd-b6a0-a89936f2a14f",
+      "7e51f58b-54da-4820-9536-d253d3007112",
+      "3cae0c2e-ba62-4f5a-b8a5-281eff940291"
+    ]
+  },
+  {
+    "issue_id": "usability.general",
+    "name": "Frequent, Repetitive Ads",
+    "description": "Users complain that ads appear too often and repeat, making them annoying.",
+    "topic": "usability",
+    "example_review_ids": [
+      "f010a2e3-7629-4e41-81a1-a78ae48cd9da",
+      "2f52b6b7-d462-4f10-8ec1-a837fea3ab2b",
+      "9e92809c-1d10-49c8-b956-c2343d50bc69",
+      "6d0285cb-f345-4ee5-ad4e-6916cd77a9a4",
+      "6a4ae39d-ac4f-4f14-828e-41bc3ad97ef2",
+      "57fc92cc-3266-4d9b-b6c5-0fa09c2c0a6f",
+      "9be8da3c-df7d-4748-84a5-c47a74b444d7",
+      "03e9f967-b0c7-4535-bb2f-cb8dc0827797"
+    ]
+  },
+  {
+    "issue_id": "playback.general",
+    "name": "Playback is unreliable",
+    "description": "Songs may cut out, fail to play, or glitch, and the app may close during playback.",
+    "topic": "playback",
+    "example_review_ids": [
+      "3f462947-3f4b-4d38-ada4-7dab21c0055e",
+      "dd018112-0266-4aef-a3c4-c1f343432e35",
+      "c3a26471-eedb-4ee6-876a-4e8e133d67b8",
+      "40abba11-6cce-4eff-ae74-9ec4579550e0",
+      "ff434191-87c8-4a76-a30a-de1591982192",
+      "97ae544b-3a03-475a-bdcf-83d1a457e17c",
+      "10878c3f-c43e-43cb-86fe-c993b56403cc",
+      "8a29017b-f23a-4dc4-af6d-96633fa8ecf1"
+    ]
+  },
+  {
+    "issue_id": "usability.redesign_ui",
+    "name": "Unpopular app redesign",
+    "description": "Users dislike recent updates and the new layout, including a cluttered home screen with video snippets.",
+    "topic": "usability",
+    "example_review_ids": [
+      "f1505de0-6350-4751-8eb6-3f632bc0e8de",
+      "d7447e2d-9024-496c-bea1-da90d6c52b7e",
+      "53d17bb6-2ab8-4b4c-b19e-50c84736f0b8",
+      "13807ab1-7ed9-4140-bcb9-9ec579e7b0cc",
+      "c520f0bd-885f-43b9-96ca-3cb175c5f4a4",
+      "bfb6af0f-a139-4056-b233-a0bdb2fec6da",
+      "46f48cf7-fce0-45a9-8c31-cc7a01b3f7a0",
+      "c999c426-f722-406c-a26b-3f7df2aab57c"
+    ]
+  },
+  {
+    "issue_id": "other.bad_update_generic",
+    "name": "Problems After App Updates",
+    "description": "Users report that Spotify becomes disappointing or develops problems after updates.",
+    "topic": "other",
+    "example_review_ids": [
+      "48bfd4a7-5ad1-4275-932f-e609bf83cdde",
+      "e6afb45b-08a3-4e68-894b-59ebc9524562",
+      "1480e8d9-c41f-4ae3-b031-c5ccea9c799c",
+      "0f4f67a2-6119-42e2-b14b-58e36e198cac",
+      "87dca232-40cd-440f-b54e-83bc5253cd4e",
+      "fb908616-42f8-44c2-a9f8-50dd1c457bd3",
+      "50a8f8c3-4a5f-4a5e-aa93-0892c3ba52b2",
+      "21c1a889-0c42-48ad-ac5b-fd81febf8708"
+    ]
+  },
+  {
+    "issue_id": "billing.price",
+    "name": "Too Much Requires Premium",
+    "description": "Reviewers object that basic listening features are locked behind a costly Premium subscription or otherwise require payment.",
+    "topic": "billing",
+    "example_review_ids": [
+      "a9eceb1c-d2a2-4b73-a50b-f25d63e87ac2",
+      "21915fcd-9a35-48ba-b277-6296c4154603",
+      "ead2b9f1-76d0-4934-b397-e2d11d0eff73",
+      "4a0e56a4-4a33-4dce-a8ce-4a85878f7853",
+      "99350dcb-fb74-4ee0-b688-a516165c6107",
+      "9e97b028-5ac3-4b93-812d-5c72cc2cd429",
+      "cdaecfc0-7eda-4bfa-95a6-d6b5019caf7e",
+      "aa922267-71f2-499c-85d4-04926f453585"
+    ]
+  },
+  {
+    "issue_id": "playback.stops_pauses",
+    "name": "Playback Stops Unexpectedly",
+    "description": "Music and podcasts stop or fail to continue playing, sometimes after a pause or on the lock screen.",
+    "topic": "playback",
+    "example_review_ids": [
+      "23cf7b22-c8dd-4f19-b37e-1f6df6fc2a05",
+      "03644631-d311-41f4-9d3c-7c829a1aa2b3",
+      "a58d4149-46fd-4f9d-9864-25254119557f",
+      "e2935e02-d6bd-4c44-91a4-c1b55fb3e7b4",
+      "b0449a44-0df3-4ee6-ad19-8cf06c6eb095",
+      "1c4d38cb-9e3f-4f46-99d4-9b4d4880492f",
+      "73b034cb-375d-4675-b6bf-78b8e220f7af",
+      "9716778d-e57b-4afe-9042-931a5ac5a7cf"
+    ]
+  },
+  {
+    "issue_id": "playback.loading_lag_network",
+    "name": "Playback Loading and Lag",
+    "description": "Playback and app content frequently fail to load, lag, disconnect, or play reliably.",
+    "topic": "playback",
+    "example_review_ids": [
+      "13567290-9860-4cbe-ac9a-775b8407fa99",
+      "69d125b2-52ff-4d9c-a4c5-b71fab01e61b",
+      "1924c449-0369-4b00-a6a2-22d79be8727a",
+      "672a8f4e-5434-4d5c-9b24-03fe0d7c4b40",
+      "f9203d5d-a629-46b0-b066-804892244365",
+      "32698d9e-4609-4415-9c2c-da0259fb9433",
+      "68a5d92a-1dca-40ba-b9f8-fc61a24b12a8",
+      "fd58754b-6bbd-4084-9d27-8b2ef4e02ecd"
+    ]
+  },
+  {
+    "issue_id": "usability.library_playlists",
+    "name": "Playlist Playback and Controls",
+    "description": "Users report confusing queue and playlist controls, difficulty creating playlists, and playback that ignores their song choices or plays unrelated tracks.",
+    "topic": "usability",
+    "example_review_ids": [
+      "8f383468-bfbc-4db1-9aeb-1dee77a7307b",
+      "25bbe898-e819-4fcb-942b-0fccd065a33f",
+      "42238e6d-798e-4800-ab36-92764f3cf786",
+      "d510ff14-ee9a-46b0-be04-7a70f12b2e35",
+      "ca33cb8c-9d06-47b6-a50d-a50ed2a39828",
+      "d67dff6e-7700-4427-8c00-1869f869a0a5",
+      "c02683b9-4980-48d9-a15a-29f9faa51745",
+      "18014027-f8b0-4488-b43b-549a486923ca"
+    ]
+  },
+  {
+    "issue_id": "catalog.general",
+    "name": "Catalog and Playlist Problems",
+    "description": "Users report missing or removed songs, unwanted or repetitive music in playlists, and limited playback access.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "96a80a3a-14ae-4384-97f5-3b7d3cf7065a",
+      "b3098d33-f2c9-496a-887f-3922e36de673",
+      "6bf5d81e-a215-4cb9-aa59-158a93a0192a",
+      "4d327494-7846-481a-bf00-f4b5abc099c4",
+      "75912285-b90a-41c5-aec5-93d3b11dd0b3",
+      "49c6be74-4572-4622-abd9-e038baf10cc2",
+      "0bc25ea1-60ff-429d-a745-81708ed41871",
+      "aace4b14-3d35-47b3-bcbc-7eaf62794255"
+    ]
+  },
+  {
+    "issue_id": "access.login_failure",
+    "name": "Unable to Log In",
+    "description": "Users report being unable to sign in, including through linked accounts, or getting stuck during login.",
+    "topic": "access",
+    "example_review_ids": [
+      "c4da3f91-0e39-4eb9-b992-43c75ed5ca66",
+      "a1a52508-1b15-478f-8582-d39dfe0df66c",
+      "12efd15d-4d4f-4a71-8e71-69d03b6f983a",
+      "ec9737dc-fb7f-4df0-a7c6-65194036478b",
+      "11344c5e-30ca-49ce-a61c-3cf21bab8840",
+      "9e6ceb1f-6757-4883-a912-a4607e6e180f",
+      "4d154e8f-408c-4444-876f-c632dca0aa6f",
+      "38801d8c-b555-4ab5-8f1a-96f10c7be4cf"
+    ]
+  },
+  {
+    "issue_id": "playback.crashes_wont_open",
+    "name": "App crashes or won’t open",
+    "description": "The app frequently crashes, fails to open, or stops loading, sometimes interrupting playback.",
+    "topic": "playback",
+    "example_review_ids": [
+      "73724807-3061-4a00-86fe-64065dbd8d74",
+      "fac34e2c-b353-4a86-bf4e-e9a34708a95e",
+      "150f3623-250b-4753-8e24-f6d2ef9d2f10",
+      "d9d6ae66-9f13-4aaf-85ee-c4cfb33c4ffd",
+      "bd003e26-6296-4605-9695-293e7a795222",
+      "68657bca-b647-4308-afc1-23b5e9a31b63",
+      "647975bc-5143-4c8f-a38e-48b4acfe2916",
+      "3e8e46eb-7327-4fa7-80e9-ebe312b6117c"
+    ]
+  },
+  {
+    "issue_id": "catalog.lyrics",
+    "name": "Lyrics Missing or Unavailable",
+    "description": "Listeners say lyrics are missing, unavailable, not loading, or incorrect, and some are prompted to explore Premium to access them.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "5991a8c4-7a3b-4242-84e7-1f4222a0a947",
+      "bf8292c1-d2e7-4b15-ae9f-511e8f006be5",
+      "b5143f5b-9478-42bb-b8f1-54eca3f2c86f",
+      "149c0fd2-79c2-4066-98bd-79ef070a8d16",
+      "13060528-5cb9-49cd-9eab-d2cb0a73507a",
+      "56b40f39-4e5d-4542-a7d7-b63408627519",
+      "67091660-6777-4233-9acc-1c4d0271257c",
+      "caf4eb21-e9dc-4d5d-aa33-d91b3f64d83c"
+    ]
+  },
+  {
+    "issue_id": "usability.forced_shuffle",
+    "name": "Unwanted Shuffle and Added Songs",
+    "description": "Shuffle and Smart Shuffle play songs outside selected playlists or albums, making it hard to hear the music users chose.",
+    "topic": "usability",
+    "example_review_ids": [
+      "082b367e-eac0-4afb-893a-40e8b7e08412",
+      "e4330502-bab4-44c4-8059-f19036adc993",
+      "56b666a9-40ad-49ba-af55-622424063288",
+      "77c8c8a4-7819-412a-8a09-cf83e8cc9c59",
+      "22850251-1ec6-430e-b7d1-cbaa7404c559",
+      "202d7de6-2778-45e1-9db4-0d4daba4b026",
+      "ee8c1306-8c77-4ff3-a427-52764a6d6fcf",
+      "8e73c6d1-c85f-406a-8a15-6874b46426ab"
+    ]
+  },
+  {
+    "issue_id": "billing.premium_not_working",
+    "name": "Too Many Features Require Premium",
+    "description": "Listeners complain that basic music controls and playback features are restricted without a premium subscription, making the free app feel limited.",
+    "topic": "billing",
+    "example_review_ids": [
+      "6e23ebd6-7579-449f-93d9-256f171a8672",
+      "9b23baab-3f51-464a-86d2-cead2f192df6",
+      "51b9029e-3027-4177-b67c-a939d85e4062",
+      "088909d0-cf9b-42b5-9259-e03b6d1cfa47",
+      "f6a0e495-bc1c-4899-b178-66d32f2045e1",
+      "5c907ffa-de04-4c24-9761-deeee8816185",
+      "797e2994-bebb-4e31-be58-b5d804c0c8cd",
+      "656981a7-bdf8-466c-a814-6d7351cd2991"
+    ]
+  },
+  {
+    "issue_id": "downloads.general",
+    "name": "Trouble Downloading Music",
+    "description": "Users report being unable to download songs or having downloaded playlists deleted.",
+    "topic": "downloads",
+    "example_review_ids": [
+      "e825690b-d260-4eda-a6b4-0df0ece8ed6b",
+      "48bb15ce-f251-400d-9889-cfc6f740eb2a",
+      "8838914e-8525-42fd-ad7c-0a1e7cc0a962",
+      "d5e78e97-3349-4dfa-b83a-9432b0728893",
+      "7deed6f8-fb8f-4d82-835f-a948058686b3",
+      "66cf3c40-a1d2-4fa1-b06d-7a902accba75",
+      "db3c28f0-9c0e-4658-a0f2-eab69f540cd0",
+      "fdd8c8d8-ac78-4607-a38d-634c06b39cd2"
+    ]
+  },
+  {
+    "issue_id": "access.general",
+    "name": "Trouble Accessing Accounts",
+    "description": "Users report being unable to log in or stay logged in, with some also unable to use the app or create an account.",
+    "topic": "access",
+    "example_review_ids": [
+      "901d5176-e6ab-4df1-b9f4-1a990e9f13ac",
+      "e379efda-83fe-4ce4-8cef-8474060b47cf",
+      "66161b18-0efa-4fcc-a5d9-5ed52b6627cf",
+      "32fb340f-4f9f-4551-8dae-755221e58d6a",
+      "4414c7bb-f116-475c-9817-f2b8fed243a2",
+      "f8290016-cfae-40e8-9d90-f20c208f109c",
+      "1ca9d2e1-610f-4876-916b-1326b186d7f0",
+      "85463d94-d90f-4c97-ac48-0d4b655c9723"
+    ]
+  },
+  {
+    "issue_id": "catalog.recommendations_repetition",
+    "name": "Repetitive and Irrelevant Recommendations",
+    "description": "Recommendations often repeat songs or suggest music that feels irrelevant, while offering too little new music.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "5370b7b1-cd2e-48bd-9a44-9cf9400a96b3",
+      "af3163c9-6ca7-44ba-ba5e-1a402716968e",
+      "544a8481-e12b-4878-92d0-ec3a5256e13a",
+      "f412114f-1f93-4837-a579-490a37e8f187",
+      "d0dc4dba-818a-4f50-a286-694f60f02f76",
+      "cf5c7e7f-5e64-42cb-888f-a8cce3b79292",
+      "738137ed-475a-4a5e-bad5-4dbd78c876dd",
+      "12440143-071f-4acb-a609-83d24d6dac27"
+    ]
+  },
+  {
+    "issue_id": "playback.audio_quality",
+    "name": "Audio Quality and Volume Problems",
+    "description": "Users report poor or restricted audio quality, unusable volume controls, and inconsistent playback volume.",
+    "topic": "playback",
+    "example_review_ids": [
+      "97514a20-4d5c-4cb3-9c67-8871fd7e920e",
+      "4b7c716b-f37c-4be3-8a89-3882f1563631",
+      "47c23295-243d-4e99-8d42-b374880719b7",
+      "649c129a-f62f-457a-97b1-c135da37ff2f",
+      "9a0db436-d2f1-4634-80eb-f6c3fc8a0652",
+      "1ff55f94-d0b8-46aa-a2a5-ff97ec74d8bd",
+      "e5579b0b-f662-479b-9103-e13d263b9459",
+      "01543718-4b76-4321-8e76-daf468407a22"
+    ]
+  },
+  {
+    "issue_id": "catalog.missing_content",
+    "name": "Songs Missing or Removed",
+    "description": "Listeners report that songs, including favorites and Zee Music tracks, are unavailable or have been removed.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "cdf370da-8263-4661-b47c-6f46432c3c78",
+      "e5867a52-b4c3-4dee-983f-56fc6e0620bd",
+      "10775595-01b9-4623-9163-51619e2a0fa9",
+      "01e2b320-1c22-492d-84b4-13644ff5cc9e",
+      "736de827-aae8-4cc0-8b18-cd04ab3ed489",
+      "ef1f0893-c367-4789-92a2-6bad340c00d7",
+      "9d9d9220-7236-4f31-a6c2-d984a132d264",
+      "794e324a-2735-481e-93f5-4219fb25bfc7"
+    ]
+  },
+  {
+    "issue_id": "other.politics_boycott",
+    "name": "Boycott Over Quran Disrespect",
+    "description": "Reviewers say they oppose or boycott Spotify because of perceived disrespect toward the Quran and its association with Sweden.",
+    "topic": "other",
+    "example_review_ids": [
+      "88690576-89de-48d9-86cd-952f8df5b134",
+      "b1492d81-6a4f-4b16-a9c5-9d1aff9ead7b",
+      "13aaca55-cd33-4b4c-8c95-7f2dd9b03062",
+      "9eca83ab-ecb4-480d-b6f1-dccf7030d4f1",
+      "3d968fdc-c0eb-408c-b3fd-9259f722bf04",
+      "970797ce-f536-4547-a3c5-9f66b4968460",
+      "d18015a0-d474-423b-ba9d-1b595ec58f5e",
+      "7d35908e-8433-4b65-a9e8-2178b365677b"
+    ]
+  },
+  {
+    "issue_id": "downloads.downloads_lost",
+    "name": "Downloaded Music Disappears",
+    "description": "Downloaded songs or playlists disappear, are deleted, or need to be downloaded again, sometimes leaving users unable to play music offline.",
+    "topic": "downloads",
+    "example_review_ids": [
+      "794d0d73-f0b6-4c70-9eff-f73d669c18af",
+      "2ec69f89-936c-4c2b-8ea3-27b0d276b1ae",
+      "b845ff5f-3b14-4f40-bbb3-637618843569",
+      "67b210a0-7a9c-4ef5-ab75-06ed9bf7bb4d",
+      "a405a67b-b1f3-4e53-a556-2ebb765c21fb",
+      "e8b8ced6-5849-4be4-be9a-18a4c7c7993f",
+      "ee11e1df-cb73-4c3a-b5e8-7268c7872b01",
+      "616fa96d-6e23-4527-b4a4-71d669eaac25"
+    ]
+  },
+  {
+    "issue_id": "downloads.offline_not_working",
+    "name": "Downloaded Music Won’t Play Offline",
+    "description": "Users say offline listening is unavailable or downloaded songs and podcasts often fail to play without an internet connection.",
+    "topic": "downloads",
+    "example_review_ids": [
+      "7c4ec78c-abda-4095-a707-ba9b9f3c5e63",
+      "0629557c-88ef-4032-beaa-399ef427cf6c",
+      "b833a768-e9c8-4e0a-a7a0-d73ec7420d7d",
+      "1a107494-89e8-4b44-8f4f-952af547c210",
+      "8c123311-a158-4864-9603-582f3c34edba",
+      "8a69da4b-b65e-402f-99ed-36dda5717b03",
+      "d4a7c59d-1561-48e1-9ed8-2fb538f45ca3",
+      "ea7e7a97-98e0-48d6-8e3d-436b5f94aa81"
+    ]
+  },
+  {
+    "issue_id": "catalog.search",
+    "name": "Music search problems",
+    "description": "Search is inconvenient or unreliable, failing to load or return the songs and artists users are looking for.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "cf9510a8-c722-4812-be26-5454559676c4",
+      "2d0508d6-6a43-478c-be53-79b93eda4dee",
+      "4036ab6e-08f6-4694-bcaa-639f2758fb84",
+      "4bafa11f-d059-4c33-b256-1d2dfc85286e",
+      "4d313a9e-cfef-4236-b642-c9e9babdb633",
+      "f7627b88-43d1-4f45-bb51-486f93251c06",
+      "a7353811-9bcc-4c49-ab4d-f2b924368f5e",
+      "aaeb1b6d-4310-4164-994e-664a64fad21c"
+    ]
+  },
+  {
+    "issue_id": "billing.charges_refunds",
+    "name": "Unexpected Spotify Charges",
+    "description": "Users report money being charged or taken from their accounts unexpectedly, including after canceling or when a renewal fails.",
+    "topic": "billing",
+    "example_review_ids": [
+      "a551564e-db4a-489a-a210-1d994984150e",
+      "ff7a2f97-2603-4e0e-95c9-29fa03a803a3",
+      "91b3f409-7fcf-472b-a308-29361707085e",
+      "ae7f1da6-8656-4abc-8d2d-3730923fa741",
+      "10800b01-920d-4c22-91f5-521c45caf4f0",
+      "2a4d62a9-e3c7-4744-80d2-469c7b6e9e52",
+      "e51bcefb-8071-4e36-9c57-87281443bd29",
+      "9388609e-28c2-4b4d-8097-c9c4d5028322"
+    ]
+  },
+  {
+    "issue_id": "playback.devices_bluetooth_car",
+    "name": "Bluetooth and Device Connection Problems",
+    "description": "Playback connections to Bluetooth devices, cars, and speakers are unreliable or fail to work as expected.",
+    "topic": "playback",
+    "example_review_ids": [
+      "ac415d37-c92e-4ed9-b717-5be1828b7d50",
+      "ab57f5c1-fc0a-4e68-8de5-58f4f5487a33",
+      "2866067b-37d2-4c45-a6a7-20d86d661ff2",
+      "b0b81704-45ad-43f6-9e69-617ff33d5d7b",
+      "5f444f9e-38e0-4a09-b90e-d359a7c3a344",
+      "86b9ae77-dd83-4d93-83bd-639a7a6b1403",
+      "71c32c75-83cd-467f-b68e-086cb76ec5db",
+      "9324b334-2ec7-44ec-9da4-5b9f7614b689"
+    ]
+  },
+  {
+    "issue_id": "support.general",
+    "name": "Unresponsive Customer Support",
+    "description": "Users report that Spotify support does not reply or leaves them waiting for help.",
+    "topic": "support",
+    "example_review_ids": [
+      "c4a8d123-9254-4a2f-a0b5-e62d429b8436",
+      "45d07c5b-1110-422a-8c4d-7f128042697c",
+      "d7f0416d-849f-43d3-88b0-e821a1802383",
+      "2e643b07-9126-4fed-bb00-3c0102e62bde",
+      "cbc20eb8-441a-44a2-9481-f84baa8755ab",
+      "99566d17-45c3-4f4e-86f0-1bef74b8c92a",
+      "33526c6f-7a49-4b3d-bd20-d1bc191c494c",
+      "4ba5f31f-52fa-4dae-983e-c13346728254"
+    ]
+  },
+  {
+    "issue_id": "catalog.podcasts_audiobooks",
+    "name": "Podcast and Audiobook Access Problems",
+    "description": "Users report podcasts or audiobooks being unavailable, inaccessible, or not responding when tapped.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "a8b31354-086f-4e9f-9e0b-1abf55fa4af2",
+      "be3d80bd-cfa5-4e59-85c7-60a3c7467f7b",
+      "42da37cb-8bbf-4208-b9d1-5cde1a2c9dc4",
+      "7191261f-bfe9-49b2-a666-e1dc355db29c",
+      "1d859558-21e6-4dcb-ad0e-ffe90bc68d53"
+    ]
+  },
+  {
+    "issue_id": "playback.battery_storage",
+    "name": "Battery and Storage Drain",
+    "description": "Users report the app draining battery or taking up too much phone memory.",
+    "topic": "playback",
+    "example_review_ids": [
+      "332c1cd5-69a9-473f-b5d5-cf254ca53919",
+      "3508ac83-8f39-4ee3-995e-3efe65ead722",
+      "3b198677-19ee-4a14-80d3-a7a95cd83a91",
+      "5f501da2-4732-4daa-8712-367e48cbeb5c"
+    ]
+  },
+  {
+    "issue_id": "access.account_security",
+    "name": "Unable to Access Hacked Account",
+    "description": "The user cannot log in, suspects their account was hacked, and cannot reach technical support.",
+    "topic": "access",
+    "example_review_ids": [
+      "305c3fe1-109c-4f52-b7c4-5b95bb526035"
+    ]
+  }
+]

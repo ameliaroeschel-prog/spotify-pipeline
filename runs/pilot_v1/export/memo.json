@@ -1,0 +1,11 @@
+{
+  "priority_area": "usability",
+  "priority_issue_id": "usability.ads",
+  "recommendation": "Prioritize **usability**, with **Too Many Ads** as the lead issue. Usability ranks first by severity sum, with 35 severity points and 14 complaints [A2]. Within the area, Too Many Ads has 7 complaints and a severity sum of 15 [C5][C6]. Reviews describe ads as loud and frequent, including “The ads are so loud :'(",
+  "alternatives": [],
+  "limitations": [],
+  "cited_claim_ids": [],
+  "cited_review_ids": [],
+  "model": "gpt-6-luna",
+  "generated_at": 1791929222.7681642
+}

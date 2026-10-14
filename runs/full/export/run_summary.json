@@ -1,0 +1,39 @@
+{
+  "run_id": "20261013T153707-df2a5f",
+  "synthetic": false,
+  "source_rows": 660622,
+  "completed": 660603,
+  "quarantined": 19,
+  "pending": 0,
+  "quarantine_reasons": {
+    "empty_review_text": 13,
+    "enrich_failed:invalid_label_values": 6
+  },
+  "distinct_texts": 484189,
+  "cache_reuse_rows": 176420,
+  "golden": {
+    "n": 50,
+    "topic_agreement": 0.78,
+    "intent_agreement": 0.9,
+    "severity_exact": 0.92,
+    "severity_mae": 0.14,
+    "label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3"
+  },
+  "verifier": {
+    "sample_size": 4840,
+    "topic_agreement": 0.804,
+    "intent_agreement": 0.879,
+    "severity_exact": 0.855,
+    "severity_mae": 0.163
+  },
+  "cost_usd": 3.758554,
+  "cost_by_role_usd": {
+    "enrich": 3.348257,
+    "group": 0.003181,
+    "memo": 0.003229,
+    "verify": 0.403888
+  },
+  "wall_seconds": 11428.0,
+  "model": "gpt-6-luna",
+  "label_config": "gpt-6-luna+effort-none+enrich-v4+schema-v3"
+}

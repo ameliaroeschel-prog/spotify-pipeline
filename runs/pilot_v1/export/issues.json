@@ -1,0 +1,214 @@
+[
+  {
+    "issue_id": "billing.free_tier_limits",
+    "name": "Free Tier Music Restrictions",
+    "description": "Free users say they cannot freely choose, skip, replay, or seek through songs without Premium.",
+    "topic": "billing",
+    "example_review_ids": [
+      "d146397f-4a94-4980-be00-ae9212eca3a7",
+      "88439ec2-7c49-4c57-bedb-c5e098692aff",
+      "ebc64fe2-9553-4528-87d5-cb4bb9783be6",
+      "ad730d1a-829a-4dc4-9561-7e1cd07e2c30",
+      "89ea2c30-db8b-459d-8ab7-bbcb7f92c774",
+      "a78d831a-69f4-428a-9235-cfdd9775c509",
+      "a3605554-5c3a-441d-836e-e9fdea83eb2e",
+      "89a8e180-7846-4421-a2b6-fa7787e9d0d2"
+    ]
+  },
+  {
+    "issue_id": "usability.ads",
+    "name": "Too Many Ads",
+    "description": "Listeners say ads are too frequent or loud, interrupting music playback and making the free experience frustrating.",
+    "topic": "usability",
+    "example_review_ids": [
+      "ab67a772-c3b7-42ba-9b80-8d21d3857018",
+      "cf6166ae-d71a-4839-9add-088645ad3b78",
+      "3e8bdc92-4934-457e-85cc-8b9d14bf51c0",
+      "e5e6c55f-3069-4b7c-9807-f8b5d5bf2726",
+      "ed15bb17-865a-492b-ba1b-268f4cab78f6",
+      "c2738a4f-e57c-46bc-a4ad-8ec5a4b5d5cd",
+      "85383985-844d-4f9b-bcd9-d6016ac35f6b"
+    ]
+  },
+  {
+    "issue_id": "other.general",
+    "name": "General App Dissatisfaction",
+    "description": "Reviewers express broad dissatisfaction with the app without identifying a specific problem.",
+    "topic": "other",
+    "example_review_ids": [
+      "2d5cdd20-3094-40a5-bc6e-653302b59b56",
+      "8b6e028a-5f63-4011-9841-cbbade4830eb",
+      "b92a7381-b5cd-4c77-9176-e5c4b4818c8a",
+      "51bfd887-24a0-4741-8b59-68e0a726dd7a",
+      "06a45bd5-3ed9-43af-b7f2-8b9487e2ffff",
+      "178c3b49-b689-4fe4-92a2-2257a58e6d95"
+    ]
+  },
+  {
+    "issue_id": "other.bad_update_generic",
+    "name": "Disappointing Recent Updates",
+    "description": "Users say recent updates have made the app worse or unusable without specifying a particular problem.",
+    "topic": "other",
+    "example_review_ids": [
+      "b47c203f-366e-4409-922d-cd52aa8bbef6",
+      "45c561b9-cc47-4d80-95d3-f0d20bc84af3",
+      "ca16e65d-d2ff-4453-a495-b8c422809330",
+      "c1ab120a-f91f-4ee3-87f5-66f352e2d47f"
+    ]
+  },
+  {
+    "issue_id": "usability.controls_navigation",
+    "name": "Missing or hard-to-use playback controls",
+    "description": "Users say updates removed or made it difficult to use basic playback controls, such as repeating songs, replaying a few seconds, and disabling autoplay.",
+    "topic": "usability",
+    "example_review_ids": [
+      "e16a4550-43e7-4ae1-b538-a65cc652c31b",
+      "d455c11e-c530-4c03-a395-38f5a5cdb8d3",
+      "9e5f9745-f8be-48d3-b9de-4d118507d94a",
+      "7084ced1-0428-4093-9328-442f74719b4f"
+    ]
+  },
+  {
+    "issue_id": "billing.premium_pressure",
+    "name": "Too Much Pressure to Go Premium",
+    "description": "Users complain that Spotify increasingly puts features or ads behind Premium and pushes users to pay.",
+    "topic": "billing",
+    "example_review_ids": [
+      "21915fcd-9a35-48ba-b277-6296c4154603",
+      "035213ba-b1b9-411c-b028-70296e5f0e73",
+      "3e82cf28-6b0a-4980-902c-b6aa154d353a"
+    ]
+  },
+  {
+    "issue_id": "access.login_failure",
+    "name": "Unable to Log In",
+    "description": "Users say they cannot access their accounts because the app will not accept their password.",
+    "topic": "access",
+    "example_review_ids": [
+      "32fb340f-4f9f-4551-8dae-755221e58d6a",
+      "de0a9cdf-8974-48bc-802f-331228df4619"
+    ]
+  },
+  {
+    "issue_id": "catalog.lyrics",
+    "name": "Lyrics Missing from Some Songs",
+    "description": "Lyrics are unavailable for some songs.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "e0127547-4edd-44a0-8d5e-e8398bc07086",
+      "47becad0-8ae5-4a10-9731-fde8f2091862"
+    ]
+  },
+  {
+    "issue_id": "catalog.missing_content",
+    "name": "Missing Music in the Catalog",
+    "description": "Users say the catalog lacks songs and has limited gospel music.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "a1a28752-3256-4f81-b888-3e943343529f",
+      "0658feaa-5bec-416e-b6b0-3de2a4c14580"
+    ]
+  },
+  {
+    "issue_id": "other.politics_boycott",
+    "name": "Political and Values-Based Boycotts",
+    "description": "Reviewers say they oppose Spotify over its perceived support for LGBTQ+ people or an alleged Quran-burning connection and intend to boycott or uninstall the app.",
+    "topic": "other",
+    "example_review_ids": [
+      "33526c6f-7a49-4b3d-bd20-d1bc191c494c",
+      "486d1d7a-d6f6-41ea-81ad-ed875452729c"
+    ]
+  },
+  {
+    "issue_id": "playback.crashes_wont_open",
+    "name": "App crashes or gets stuck loading",
+    "description": "The app crashes on launch or remains stuck on the loading screen, preventing users from opening it.",
+    "topic": "playback",
+    "example_review_ids": [
+      "55cc3abf-c295-4591-8c3a-78085cfdefaa",
+      "66a29b3c-c14d-440e-b722-b23e0c99ae82"
+    ]
+  },
+  {
+    "issue_id": "usability.forced_shuffle",
+    "name": "Forced Shuffle Disrupts Playlists",
+    "description": "Songs in playlists play randomly, disrupting listeners’ preferred song order.",
+    "topic": "usability",
+    "example_review_ids": [
+      "5c9c17d3-9d6a-4fa1-a2a4-ae98eefbbd25",
+      "618d1dbb-0186-4537-923a-7b4dabf19afb"
+    ]
+  },
+  {
+    "issue_id": "catalog.recommendations_repetition",
+    "name": "Recommendations Feel Less Fresh",
+    "description": "The recommendations include fewer songs and seem less up to date than before.",
+    "topic": "catalog",
+    "example_review_ids": [
+      "1807cc68-ba99-4edc-b6f1-2a1478e69109"
+    ]
+  },
+  {
+    "issue_id": "downloads.download_limits",
+    "name": "Downloads Get Stuck in Background",
+    "description": "Song downloads get stuck while running in the background.",
+    "topic": "downloads",
+    "example_review_ids": [
+      "2ffdf599-a0d5-4c01-bf26-025215d44c06"
+    ]
+  },
+  {
+    "issue_id": "downloads.offline_not_working",
+    "name": "Offline Listening Not Working",
+    "description": "Downloaded music is not available for offline listening.",
+    "topic": "downloads",
+    "example_review_ids": [
+      "dcff57c6-abd6-413b-b255-aec3dc34fcbd"
+    ]
+  },
+  {
+    "issue_id": "playback.audio_quality",
+    "name": "Music Adjustment Bug",
+    "description": "The music adjustment feature does not work properly.",
+    "topic": "playback",
+    "example_review_ids": [
+      "9c9757da-6b99-4c95-a0e7-0661ee858027"
+    ]
+  },
+  {
+    "issue_id": "playback.devices_bluetooth_car",
+    "name": "Assistant Says Playing but No Music",
+    "description": "Google Assistant reports that a Spotify playlist is playing, but no songs play.",
+    "topic": "playback",
+    "example_review_ids": [
+      "46ff0c74-5e86-4e5b-b4cd-36201aab0f9e"
+    ]
+  },
+  {
+    "issue_id": "playback.loading_network",
+    "name": "Unable to Connect to the Internet",
+    "description": "The app cannot connect to the internet, preventing playback.",
+    "topic": "playback",
+    "example_review_ids": [
+      "4ab2089a-ffa8-49e7-a8a3-aeb583a96796"
+    ]
+  },
+  {
+    "issue_id": "playback.stops_pauses",
+    "name": "Playback Stops Mid-Song",
+    "description": "Music stops halfway through a song and may restart with a different song instead of resuming.",
+    "topic": "playback",
+    "example_review_ids": [
+      "6c257eba-3dca-49f6-b7f0-4c4484d81e26"
+    ]
+  },
+  {
+    "issue_id": "usability.redesign_ui",
+    "name": "Unpopular Home Screen Redesign",
+    "description": "The reviewer dislikes the updated home screen.",
+    "topic": "usability",
+    "example_review_ids": [
+      "94c9f2f9-36fa-4c11-936e-660514fe7a35"
+    ]
+  }
+]
